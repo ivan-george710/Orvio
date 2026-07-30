@@ -70,7 +70,7 @@ To provide a reliable, scalable, and user-friendly platform that simplifies even
 | Containerization | Docker |
 
 ## Team
-Kiran Nambiar (KRNXPRESS07)
+Kiran Nambiar (KRNxpress07)
 Ivan George (ivan-george710)
 
 ## Quick Start – Local Development
