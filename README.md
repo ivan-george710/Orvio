@@ -26,5 +26,7 @@ Orvio is a web-based event management platform that allows organizers to create 
 - PostgreSQL
 
 ## Team
+Kiran Nambiar (KRNXPRESS07)
+Ivan George (ivan-george710)
 
 Software Engineering Course Project
