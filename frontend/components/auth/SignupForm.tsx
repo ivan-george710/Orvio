@@ -101,7 +101,7 @@ export default function SignupForm() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600">
+        <p className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100">
           {error}
         </p>
       )}
@@ -109,16 +109,17 @@ export default function SignupForm() {
       <Button
   type="submit"
   disabled={loading}
+  size="lg"
   className="w-full"
 >
   {loading ? "Creating Account..." : "Create Account"}
 </Button>
 
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-slate-300/75">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-semibold text-indigo-600 hover:underline"
+          className="font-bold text-cyan-200 underline-offset-4 hover:text-cyan-100 hover:underline"
         >
           Login
         </Link>

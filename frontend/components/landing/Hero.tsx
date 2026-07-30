@@ -2,101 +2,69 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import DashboardPreview from "./DashboardPreview";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden">
+    <section className="premium-page relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-72 bg-[linear-gradient(90deg,rgba(124,58,237,0.22),rgba(99,102,241,0.16),rgba(59,130,246,0.14))] blur-3xl" />
 
-      {/* Background */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-  <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-indigo-50" />
-
-  <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-200/20 blur-3xl" />
-
-  <div className="absolute -left-40 top-60 h-96 w-96 rounded-full bg-violet-200/20 blur-3xl" />
-
-  <div className="absolute -right-40 top-40 h-96 w-96 rounded-full bg-blue-200/20 blur-3xl" />
-</div>
-
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-40 pb-20">
-
+      <div className="premium-container mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-40 pb-20">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: .6 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
           className="text-center"
         >
-
-          <div className="inline-flex rounded-full border bg-white px-4 py-2 text-sm shadow-sm">
-            🚀 Modern Event Management Platform
+          <div className="premium-kicker px-4 py-2 text-sm font-bold">
+            <Sparkles className="size-4 text-violet-200" />
+            Orvio Event OS
           </div>
 
-          <h1 className="mt-8 text-6xl font-black tracking-tight text-slate-900 md:text-7xl">
-           Plan Better.
-
+          <h1 className="premium-title mt-8 text-5xl font-black leading-[0.94] sm:text-6xl md:text-8xl">
+            Plan Events
             <br />
-
-            <span className="text-indigo-600">
-              Host Smarter.
+            <span className="bg-[linear-gradient(100deg,#8b5cf6,#6366f1_48%,#06b6d4)] bg-clip-text text-transparent">
+              That Feel Electric.
             </span>
           </h1>
 
-          <p className="mx-auto mt-8 max-w-2xl text-xl leading-8 text-slate-600">
-            Create, manage and discover events effortlessly.
-            Built for organizers, communities and universities.
+          <p className="premium-text mx-auto mt-8 max-w-2xl text-lg leading-8 sm:text-xl">
+            Create, manage and discover events effortlessly. Built for
+            organizers, communities and universities.
           </p>
 
-          <div className="mt-10 flex justify-center gap-4">
-
+          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/signup">
-              <Button
-  size="lg"
-  className="h-12 rounded-xl px-8 text-base shadow-lg"
->
+              <Button size="lg" className="w-full sm:w-auto">
                 Get Started
               </Button>
             </Link>
 
-            <Button
-  variant="outline"
-  size="lg"
-  className="h-12 rounded-xl px-8 text-base"
->
+            <Button variant="outline" size="lg">
               Learn More
-
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight />
             </Button>
-            
-
           </div>
-          <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-slate-500">
 
-  <div className="flex items-center gap-2">
-    <div className="h-2 w-2 rounded-full bg-green-500" />
-    Open Source
-  </div>
-
-  <div className="flex items-center gap-2">
-    <div className="h-2 w-2 rounded-full bg-indigo-500" />
-    Fast Setup
-  </div>
-
-  <div className="flex items-center gap-2">
-    <div className="h-2 w-2 rounded-full bg-violet-500" />
-    Modern UI
-  </div>
-
-</div>
-
+          <div className="mt-10 flex flex-wrap justify-center gap-3 text-sm font-semibold text-slate-200">
+            {["Open Source", "Fast Setup", "Modern UI"].map((item, index) => (
+              <div
+                key={item}
+                className="animate-rise-in rounded-full border border-white/12 bg-white/8 px-3 py-1.5 shadow-lg shadow-black/20 backdrop-blur-xl"
+                style={{ animationDelay: `${index * 90 + 260}ms` }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         <DashboardPreview />
-
       </div>
-
     </section>
   );
 }
