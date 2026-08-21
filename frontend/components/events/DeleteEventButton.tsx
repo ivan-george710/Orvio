@@ -45,14 +45,14 @@ export default function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
       <DialogTrigger
         render={<Button type="button" variant="destructive" size="sm" />}
       >
-        Delete
+        Withdraw
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete event?</DialogTitle>
+          <DialogTitle>Withdraw event?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. Only pending events can be deleted.
+            This action cannot be undone. Only pending events can be withdrawn.
           </DialogDescription>
         </DialogHeader>
 

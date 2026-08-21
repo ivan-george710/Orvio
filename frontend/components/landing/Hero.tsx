@@ -12,7 +12,7 @@ export default function Hero() {
     <section className="premium-page relative overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-72 bg-[linear-gradient(90deg,rgba(124,58,237,0.22),rgba(99,102,241,0.16),rgba(59,130,246,0.14))] blur-3xl" />
 
-      <div className="premium-container mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-40 pb-20">
+      <div className="premium-container mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col items-center justify-center px-6 pt-16 pb-20 sm:min-h-[calc(100vh-4.5rem)] sm:pt-20">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}

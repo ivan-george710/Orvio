@@ -51,16 +51,16 @@ export default async function DashboardPage() {
           </h2>
 
           {pendingEvents.length === 0 ? (
-            <p className="premium-empty mt-4 rounded-3xl px-6 py-10 text-center">
+            <p className="premium-empty mt-12 rounded-3xl px-6 py-10 text-center">
               You don&apos;t have any pending events.
             </p>
           ) : (
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {pendingEvents.map((event) => (
-                <div key={event.id} className="space-y-3">
+                <div key={event.id} className="flex min-w-0 flex-col gap-3">
                   <EventCard event={event} />
 
-                  <div className="premium-panel flex gap-3 rounded-2xl p-3">
+                  <div className="premium-panel flex w-full flex-wrap items-center gap-3 rounded-2xl p-4">
                     <Link
                       href={`/events/${event.id}/edit`}
                       className="inline-flex h-8 items-center justify-center rounded-xl border border-violet-300/20 bg-violet-500/10 px-3 text-sm font-bold text-violet-100 shadow-lg shadow-black/10 transition-all hover:-translate-y-0.5 hover:border-violet-300/40 hover:bg-violet-500/15"
@@ -76,17 +76,17 @@ export default async function DashboardPage() {
           )}
         </section>
 
-        <section className="mt-12">
+        <section className="mt-20">
           <h2 className="text-2xl font-black text-white">
             My Approved Events
           </h2>
 
           {approvedEvents.length === 0 ? (
-            <p className="premium-empty mt-4 rounded-3xl px-6 py-10 text-center">
+            <p className="premium-empty mt-12 rounded-3xl px-6 py-10 text-center">
               You don&apos;t have any approved events.
             </p>
           ) : (
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {approvedEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
