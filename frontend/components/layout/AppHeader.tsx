@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, CalendarPlus, LayoutDashboard, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarPlus,
+  LayoutDashboard,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
+import type { UserRole } from "@/lib/services/server/events";
 
 const appHistoryKey = "orvio:has-app-history";
 const lastPathKey = "orvio:last-path";
@@ -17,24 +24,63 @@ export default function AppHeader() {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
+    async function syncAuthState() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!isMounted) {
         return;
       }
 
-      setIsAuthenticated(Boolean(data.session));
+      if (!session) {
+        setIsAuthenticated(false);
+        setUserRole(null);
+        setIsAuthReady(true);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle<{ role: UserRole }>();
+
+      if (!isMounted) {
+        return;
+      }
+
+      setIsAuthenticated(true);
+      setUserRole(data?.role ?? null);
       setIsAuthReady(true);
-    });
+    }
+
+    syncAuthState();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(Boolean(session));
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!session) {
+        setIsAuthenticated(false);
+        setUserRole(null);
+        setIsAuthReady(true);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle<{ role: UserRole }>();
+
+      setIsAuthenticated(true);
+      setUserRole(data?.role ?? null);
       setIsAuthReady(true);
     });
 
@@ -69,6 +115,8 @@ export default function AppHeader() {
     router.push(isAuthenticated ? "/dashboard" : "/events");
   }
 
+  const isAdmin = isAuthReady && isAuthenticated && userRole === "admin";
+
   return (
     <header className="sticky top-0 z-50 border-b border-violet-300/15 bg-[#080c19]/75 shadow-2xl shadow-black/25 backdrop-blur-2xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-[4.5rem] sm:px-6 lg:px-8">
@@ -78,7 +126,10 @@ export default function AppHeader() {
           className="group inline-flex min-w-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-left shadow-lg shadow-black/15 transition-all duration-300 hover:border-violet-300/35 hover:bg-violet-500/10 hover:shadow-violet-500/15 focus-visible:ring-4 focus-visible:ring-violet-400/25 focus-visible:outline-none sm:px-4"
           aria-label="Go back in Orvio"
         >
-          
+          <ArrowLeft
+            className="size-4 shrink-0 text-slate-300 transition-all duration-300 group-hover:-translate-x-1 group-hover:text-cyan-200"
+            aria-hidden="true"
+          />
           <span className="truncate text-lg font-black tracking-normal text-white transition-colors duration-300 group-hover:text-violet-100 group-hover:[text-shadow:0_0_22px_rgba(139,92,246,0.45)] sm:text-xl">
             ORVIO
           </span>
@@ -103,6 +154,19 @@ export default function AppHeader() {
             >
               <CalendarPlus className="size-4" aria-hidden="true" />
               <span className="hidden md:inline">Create</span>
+            </Link>
+          )}
+
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="inline-flex size-10 items-center justify-center rounded-xl border border-cyan-200/20 bg-cyan-300/10 text-cyan-100 shadow-lg shadow-cyan-500/10 transition-all hover:-translate-y-0.5 hover:border-cyan-100/45 hover:bg-cyan-300/15 hover:shadow-cyan-500/20 md:w-auto md:px-3.5"
+              aria-label="Admin"
+            >
+              <ShieldCheck className="size-4" aria-hidden="true" />
+              <span className="hidden text-sm font-bold md:inline">
+                Admin
+              </span>
             </Link>
           )}
 

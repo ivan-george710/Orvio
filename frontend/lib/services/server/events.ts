@@ -22,6 +22,12 @@ export type Event = {
 
 export type UserRole = "participant" | "organizer" | "admin";
 
+export type AdminEventStats = {
+  pending: number;
+  approved: number;
+  rejected: number;
+};
+
 const eventColumns =
   "id,title,description,venue,event_datetime,max_participants,status,created_by,created_at";
 
@@ -141,6 +147,37 @@ export async function getPendingEvents(): Promise<Event[]> {
   }
 
   return data;
+}
+
+export async function getAdminEventStats(): Promise<AdminEventStats> {
+  await ensureAdmin();
+
+  const supabase = await createClient();
+
+  async function countByStatus(status: EventStatus) {
+    const { count, error } = await supabase
+      .from("events")
+      .select("id", { count: "exact", head: true })
+      .eq("status", status);
+
+    if (error) {
+      throw error;
+    }
+
+    return count ?? 0;
+  }
+
+  const [pending, approved, rejected] = await Promise.all([
+    countByStatus("pending"),
+    countByStatus("approved"),
+    countByStatus("rejected"),
+  ]);
+
+  return {
+    pending,
+    approved,
+    rejected,
+  };
 }
 
 export async function updateEvent(
