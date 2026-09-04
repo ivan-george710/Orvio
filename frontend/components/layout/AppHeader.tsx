@@ -126,10 +126,7 @@ export default function AppHeader() {
           className="group inline-flex min-w-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-left shadow-lg shadow-black/15 transition-all duration-300 hover:border-violet-300/35 hover:bg-violet-500/10 hover:shadow-violet-500/15 focus-visible:ring-4 focus-visible:ring-violet-400/25 focus-visible:outline-none sm:px-4"
           aria-label="Go back in Orvio"
         >
-          <ArrowLeft
-            className="size-4 shrink-0 text-slate-300 transition-all duration-300 group-hover:-translate-x-1 group-hover:text-cyan-200"
-            aria-hidden="true"
-          />
+          
           <span className="truncate text-lg font-black tracking-normal text-white transition-colors duration-300 group-hover:text-violet-100 group-hover:[text-shadow:0_0_22px_rgba(139,92,246,0.45)] sm:text-xl">
             ORVIO
           </span>
