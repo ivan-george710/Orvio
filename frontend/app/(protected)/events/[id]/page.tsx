@@ -5,6 +5,7 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { statusBadgeClasses } from "@/components/events/EventCard";
 import RegisterEventButton from "@/components/events/RegisterEventButton";
 import { getEventById } from "@/lib/services/server/events";
+import { getEventRegistrationCount } from "@/lib/services/server/registrations";
 
 type EventDetailsPageProps = {
   params: Promise<{
@@ -21,6 +22,10 @@ export default async function EventDetailsPage({
   if (!event) {
     notFound();
   }
+
+  const registrationCount = await getEventRegistrationCount(id);
+  const spotsRemaining = Math.max(event.max_participants - registrationCount, 0);
+  const isFull = spotsRemaining <= 0;
 
   return (
     <main className="premium-page">
@@ -75,10 +80,12 @@ export default async function EventDetailsPage({
               <Users className="size-5 text-amber-200" aria-hidden="true" />
               <div>
                 <p className="text-xs font-bold uppercase text-slate-400">
-                  Maximum Participants
+                  Spots Remaining
                 </p>
                 <p className="mt-1 text-sm font-bold">
-                  {event.max_participants}
+                  {isFull
+                    ? "Full"
+                    : `${spotsRemaining} / ${event.max_participants}`}
                 </p>
               </div>
             </div>
@@ -105,7 +112,7 @@ export default async function EventDetailsPage({
           )}
 
           <div className="mt-8 border-t border-white/10 pt-6">
-            <RegisterEventButton eventId={event.id} />
+            <RegisterEventButton eventId={event.id} isFull={isFull} />
           </div>
         </article>
       </div>

@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 
 type RegisterEventButtonProps = {
   eventId: string;
+  isFull?: boolean;
 };
 
 export default function RegisterEventButton({
   eventId,
+  isFull = false,
 }: RegisterEventButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [isRegistered, setIsRegistered] = useState(false);
@@ -43,14 +45,16 @@ export default function RegisterEventButton({
         type="button"
         size="lg"
         className="w-full"
-        disabled={isPending || isRegistered}
+        disabled={isPending || isRegistered || isFull}
         onClick={handleRegister}
       >
         {isRegistered
           ? "Registered Successfully"
-          : isPending
-            ? "Registering..."
-            : "Register for Event"}
+          : isFull
+            ? "Event Full"
+            : isPending
+              ? "Registering..."
+              : "Register for Event"}
       </Button>
     </div>
   );

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Event } from "@/lib/services/server/events";
+import { getEventById, type Event } from "@/lib/services/server/events";
 
 export type RegistrationStatus = "pending" | "approved" | "rejected" | "cancelled";
 
@@ -29,8 +29,39 @@ async function getAuthenticatedUser() {
   return { supabase, user };
 }
 
+// Registrations in these statuses count toward an event's capacity.
+// Cancelled/rejected registrations free up a spot.
+const ACTIVE_REGISTRATION_STATUSES: RegistrationStatus[] = [
+  "pending",
+  "approved",
+];
+
+export async function getEventRegistrationCount(
+  eventId: string
+): Promise<number> {
+  const supabase = await createClient();
+
+  const { count, error } = await supabase
+    .from("registrations")
+    .select("id", { count: "exact", head: true })
+    .eq("event_id", eventId)
+    .in("status", ACTIVE_REGISTRATION_STATUSES);
+
+  if (error) {
+    throw error;
+  }
+
+  return count ?? 0;
+}
+
 export async function registerForEvent(eventId: string): Promise<void> {
   const { supabase, user } = await getAuthenticatedUser();
+
+  const event = await getEventById(eventId);
+
+  if (!event) {
+    throw new Error("Event not found.");
+  }
 
   const { data: existingRegistration, error: existingRegistrationError } =
     await supabase
@@ -46,6 +77,12 @@ export async function registerForEvent(eventId: string): Promise<void> {
 
   if (existingRegistration) {
     throw new Error("You are already registered for this event.");
+  }
+
+  const activeRegistrationCount = await getEventRegistrationCount(eventId);
+
+  if (activeRegistrationCount >= event.max_participants) {
+    throw new Error("This event has reached its maximum capacity.");
   }
 
   const { error } = await supabase.from("registrations").insert({
