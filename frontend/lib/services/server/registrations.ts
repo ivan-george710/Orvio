@@ -20,15 +20,6 @@ export type EventParticipant = {
 const registrationEventColumns =
   "id,event_id,user_id,registered_at,event:events(id,title,description,venue,event_datetime,max_participants,status,created_by,created_at)";
 
-type ProfileEmbed = { full_name: string | null } | { full_name: string | null }[] | null;
-
-type ParticipantRow = {
-  id: string;
-  user_id: string;
-  registered_at: string;
-  profiles: ProfileEmbed;
-};
-
 async function getAuthenticatedUser() {
   const supabase = await createClient();
 
@@ -41,11 +32,6 @@ async function getAuthenticatedUser() {
   }
 
   return { supabase, user };
-}
-
-function profileName(profiles: ProfileEmbed) {
-  const row = Array.isArray(profiles) ? profiles[0] : profiles;
-  return row?.full_name?.trim() || "Orvio member";
 }
 
 export async function getEventRegistrationCount(
@@ -87,18 +73,11 @@ export async function getMyRegistrationForEvent(eventId: string) {
 
   const { data, error } = await supabase
     .from("registrations")
-    .select("id,event_id,user_id,registered_at")
-    .eq("event_id", eventId)
-    .eq("user_id", user.id)
-    .maybeSingle<{
-      id: string;
-      event_id: string;
-      user_id: string;
-      registered_at: string;
-    }>();
+    .select("id", { count: "exact" })
+    .eq("event_id", eventId);
 
   if (error) {
-    throwSupabaseError(error, "Failed to load registration.");
+    throw new Error(error.message || "Failed to count registrations.");
   }
 
   return data;
@@ -178,10 +157,7 @@ export async function registerForEvent(eventId: string): Promise<void> {
       .maybeSingle<{ id: string }>();
 
   if (existingRegistrationError) {
-    throwSupabaseError(
-      existingRegistrationError,
-      "Failed to check existing registration."
-    );
+    throw new Error(existingRegistrationError.message);
   }
 
   if (existingRegistration) {
@@ -202,31 +178,7 @@ export async function registerForEvent(eventId: string): Promise<void> {
   });
 
   if (error) {
-    if (error.code === "23505") {
-      throw new Error("You are already registered for this event.");
-    }
-
-    throwSupabaseError(error, "Failed to register for event.");
-  }
-}
-
-export async function cancelRegistration(eventId: string): Promise<void> {
-  const { supabase, user } = await getAuthenticatedUser();
-
-  const { data, error } = await supabase
-    .from("registrations")
-    .delete()
-    .eq("event_id", eventId)
-    .eq("user_id", user.id)
-    .select("id")
-    .maybeSingle<{ id: string }>();
-
-  if (error) {
-    throwSupabaseError(error, "Failed to cancel registration.");
-  }
-
-  if (!data) {
-    throw new Error("You are not registered for this event.");
+    throw new Error(error.message);
   }
 }
 
@@ -241,7 +193,7 @@ export async function getMyRegistrations(): Promise<RegistrationWithEvent[]> {
     .returns<RegistrationWithEvent[]>();
 
   if (error) {
-    throwSupabaseError(error, "Failed to load registrations.");
+    throw new Error(error.message);
   }
 
   return data;
