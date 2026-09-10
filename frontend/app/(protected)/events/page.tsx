@@ -1,4 +1,4 @@
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Search } from "lucide-react";
 
 import EventCard from "@/components/events/EventCard";
 import EventsSearchBar from "@/components/events/EventsSearchBar";

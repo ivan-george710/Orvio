@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CalendarDays, MapPin, Sparkles } from "lucide-react";
 
 import type { Event, EventStatus } from "@/lib/services/server/events";
+import { formatEventDate } from "@/lib/utils";
 
 type EventCardProps = {
   event: Event;
@@ -44,7 +45,7 @@ export default function EventCard({ event }: EventCardProps) {
 
         <div className="mt-5 flex items-center gap-2 border-t border-white/10 pt-4 text-sm font-bold text-slate-200">
           <CalendarDays className="size-4 text-blue-200" aria-hidden="true" />
-          <span>{new Date(event.event_datetime).toLocaleString()}</span>
+          <span>{formatEventDate(event.event_datetime)}</span>
         </div>
       </article>
     </Link>
