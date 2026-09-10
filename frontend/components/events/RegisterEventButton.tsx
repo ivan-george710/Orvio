@@ -1,36 +1,70 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
-import { registerForEventAction } from "@/lib/actions/events";
+import {
+  cancelRegistrationAction,
+  registerForEventAction,
+} from "@/lib/actions/events";
 import { Button } from "@/components/ui/button";
 
 type RegisterEventButtonProps = {
   eventId: string;
+  initiallyRegistered?: boolean;
   isFull?: boolean;
+  disabledReason?: string | null;
 };
 
 export default function RegisterEventButton({
   eventId,
+  initiallyRegistered = false,
   isFull = false,
+  disabledReason = null,
 }: RegisterEventButtonProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(initiallyRegistered);
   const [error, setError] = useState("");
 
   function handleRegister() {
     setError("");
 
     startTransition(async () => {
-      try {
-        await registerForEventAction(eventId);
-        setIsRegistered(true);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to register for event."
-        );
+      const result = await registerForEventAction(eventId);
+
+      if (!result.ok) {
+        setError(result.message);
+        return;
       }
+
+      setIsRegistered(true);
+      router.refresh();
     });
+  }
+
+  function handleCancel() {
+    setError("");
+
+    startTransition(async () => {
+      const result = await cancelRegistrationAction(eventId);
+
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+
+      setIsRegistered(false);
+      router.refresh();
+    });
+  }
+
+  if (disabledReason) {
+    return (
+      <p className="rounded-2xl border border-white/10 bg-white/8 px-3.5 py-3 text-sm font-bold text-slate-200">
+        {disabledReason}
+      </p>
+    );
   }
 
   return (
@@ -41,21 +75,32 @@ export default function RegisterEventButton({
         </p>
       )}
 
-      <Button
-        type="button"
-        size="lg"
-        className="w-full"
-        disabled={isPending || isRegistered || isFull}
-        onClick={handleRegister}
-      >
-        {isRegistered
-          ? "Registered Successfully"
-          : isFull
-            ? "Event Full"
+      {isRegistered ? (
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
+          className="w-full"
+          disabled={isPending}
+          onClick={handleCancel}
+        >
+          {isPending ? "Cancelling..." : "Cancel Registration"}
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          size="lg"
+          className="w-full"
+          disabled={isPending || isFull}
+          onClick={handleRegister}
+        >
+          {isFull
+            ? "Event is full"
             : isPending
               ? "Registering..."
               : "Register for Event"}
-      </Button>
+        </Button>
+      )}
     </div>
   );
 }

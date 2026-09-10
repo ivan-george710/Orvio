@@ -4,8 +4,14 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 
 import { statusBadgeClasses } from "@/components/events/EventCard";
 import RegisterEventButton from "@/components/events/RegisterEventButton";
+import { createClient } from "@/lib/supabase/server";
 import { getEventById } from "@/lib/services/server/events";
-import { getEventRegistrationCount } from "@/lib/services/server/registrations";
+import {
+  getEventParticipants,
+  getEventRegistrationCount,
+  getMyRegistrationForEvent,
+} from "@/lib/services/server/registrations";
+import { formatEventDate, formatParticipantCap } from "@/lib/utils";
 
 type EventDetailsPageProps = {
   params: Promise<{
@@ -23,9 +29,33 @@ export default async function EventDetailsPage({
     notFound();
   }
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const registrationCount = await getEventRegistrationCount(id);
-  const spotsRemaining = Math.max(event.max_participants - registrationCount, 0);
-  const isFull = spotsRemaining <= 0;
+  const isOrganizer = Boolean(user && user.id === event.created_by);
+  const myRegistration = user && !isOrganizer
+    ? await getMyRegistrationForEvent(id)
+    : null;
+  const participants = isOrganizer ? await getEventParticipants(id) : [];
+  const isFull =
+    event.max_participants != null &&
+    registrationCount >= event.max_participants;
+
+  let disabledReason: string | null = null;
+
+  if (event.status !== "approved") {
+    disabledReason =
+      event.status === "pending"
+        ? "This event is awaiting admin approval."
+        : `This event is ${event.status} and is not open for registration.`;
+  } else if (isOrganizer) {
+    disabledReason = "You created this event, so you cannot register for it.";
+  } else if (!user) {
+    disabledReason = "Log in to register for this event.";
+  }
 
   return (
     <main className="premium-page">
@@ -68,10 +98,10 @@ export default async function EventDetailsPage({
               />
               <div>
                 <p className="text-xs font-bold uppercase text-slate-400">
-                  Date &amp; Time
+                  Date & Time
                 </p>
                 <p className="mt-1 text-sm font-bold">
-                  {new Date(event.event_datetime).toLocaleString()}
+                  {formatEventDate(event.event_datetime)}
                 </p>
               </div>
             </div>
@@ -80,12 +110,10 @@ export default async function EventDetailsPage({
               <Users className="size-5 text-amber-200" aria-hidden="true" />
               <div>
                 <p className="text-xs font-bold uppercase text-slate-400">
-                  Spots Remaining
+                  Registered
                 </p>
                 <p className="mt-1 text-sm font-bold">
-                  {isFull
-                    ? "Full"
-                    : `${spotsRemaining} / ${event.max_participants}`}
+                  {registrationCount} / {formatParticipantCap(event.max_participants)}
                 </p>
               </div>
             </div>
@@ -100,19 +128,49 @@ export default async function EventDetailsPage({
             </p>
           </section>
 
-          {event.created_by && (
-            <section className="mt-8 border-t border-white/10 pt-6">
-              <h2 className="text-xl font-black text-white">
-                Creator
-              </h2>
-              <p className="mt-2 text-sm text-slate-300/75">
-                Created by {event.created_by}
-              </p>
+          {isOrganizer && (
+            <section className="mt-8 rounded-2xl border border-white/10 bg-white/8 p-5">
+              <h2 className="text-xl font-black text-white">Participants</h2>
+              {participants.length === 0 ? (
+                <p className="mt-3 text-sm text-slate-300/75">
+                  No one has registered yet.
+                </p>
+              ) : (
+                <ul className="mt-4 space-y-2">
+                  {participants.map((participant) => (
+                    <li
+                      key={participant.id}
+                      className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm"
+                    >
+                      <span className="font-bold text-white">
+                        {participant.full_name}
+                      </span>
+                      <span className="text-slate-400">
+                        {formatEventDate(participant.registered_at)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
 
           <div className="mt-8 border-t border-white/10 pt-6">
-            <RegisterEventButton eventId={event.id} isFull={isFull} />
+            {!user && event.status === "approved" ? (
+              <Link
+                href="/login"
+                className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-white/14 bg-white/8 text-sm font-bold text-slate-100 transition-all hover:border-cyan-200/40 hover:bg-cyan-200/10 hover:text-cyan-100"
+              >
+                Log in to register
+              </Link>
+            ) : (
+              <RegisterEventButton
+                eventId={event.id}
+                initiallyRegistered={Boolean(myRegistration)}
+                isFull={isFull}
+                disabledReason={disabledReason}
+              />
+            )}
           </div>
         </article>
       </div>

@@ -8,14 +8,45 @@ import {
   rejectEvent,
   updateEvent,
 } from "@/lib/services/server/events";
-import { registerForEvent } from "@/lib/services/server/registrations";
+import {
+  cancelRegistration,
+  registerForEvent,
+} from "@/lib/services/server/registrations";
 import type { CreateEventInput } from "@/lib/validations/event";
 
-export async function registerForEventAction(eventId: string) {
-  await registerForEvent(eventId);
+type ActionResult = { ok: true } | { ok: false; message: string };
 
-  revalidatePath(`/events/${eventId}`);
-  revalidatePath("/registrations");
+function fail(error: unknown, fallback: string): ActionResult {
+  return {
+    ok: false,
+    message: error instanceof Error ? error.message : fallback,
+  };
+}
+
+export async function registerForEventAction(
+  eventId: string
+): Promise<ActionResult> {
+  try {
+    await registerForEvent(eventId);
+    revalidatePath(`/events/${eventId}`);
+    revalidatePath("/registrations");
+    return { ok: true };
+  } catch (error) {
+    return fail(error, "Failed to register for event.");
+  }
+}
+
+export async function cancelRegistrationAction(
+  eventId: string
+): Promise<ActionResult> {
+  try {
+    await cancelRegistration(eventId);
+    revalidatePath(`/events/${eventId}`);
+    revalidatePath("/registrations");
+    return { ok: true };
+  } catch (error) {
+    return fail(error, "Failed to cancel registration.");
+  }
 }
 
 export async function updateEventAction(id: string, data: CreateEventInput) {
