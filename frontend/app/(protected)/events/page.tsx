@@ -1,10 +1,16 @@
 import { CalendarDays } from "lucide-react";
 
 import EventCard from "@/components/events/EventCard";
+import EventsSearchBar from "@/components/events/EventsSearchBar";
 import { getApprovedEvents } from "@/lib/services/server/events";
 
-export default async function EventsPage() {
-  const events = await getApprovedEvents();
+type EventsPageProps = {
+  searchParams: Promise<{ search?: string }>;
+};
+
+export default async function EventsPage({ searchParams }: EventsPageProps) {
+  const { search } = await searchParams;
+  const events = await getApprovedEvents({ search });
 
   return (
     <main className="premium-page">
@@ -17,6 +23,8 @@ export default async function EventsPage() {
           <p className="premium-text mt-2">
             Discover events happening around you.
           </p>
+
+          <EventsSearchBar />
         </div>
 
         {events.length === 0 ? (
@@ -26,11 +34,13 @@ export default async function EventsPage() {
             </div>
 
             <h2 className="mt-5 text-2xl font-black text-white">
-              No upcoming events.
+              {search ? "No events match your search." : "No upcoming events."}
             </h2>
 
             <p className="mt-2 text-slate-300/75">
-              Check back later for newly approved events.
+              {search
+                ? "Try a different title, or clear the search to see everything."
+                : "Check back later for newly approved events."}
             </p>
           </div>
         ) : (

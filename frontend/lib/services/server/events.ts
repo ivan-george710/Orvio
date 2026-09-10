@@ -86,13 +86,23 @@ export async function getMyEvents(): Promise<Event[]> {
   return data;
 }
 
-export async function getApprovedEvents(): Promise<Event[]> {
+export async function getApprovedEvents(options?: {
+  search?: string;
+}): Promise<Event[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("events")
     .select(eventColumns)
-    .eq("status", "approved")
+    .eq("status", "approved");
+
+  const search = options?.search?.trim();
+
+  if (search) {
+    query = query.ilike("title", `%${search}%`);
+  }
+
+  const { data, error } = await query
     .order("event_datetime", { ascending: true })
     .returns<Event[]>();
 
