@@ -16,7 +16,12 @@ export const createEventSchema = z.object({
     .min(2, "Venue is required.")
     .max(100, "Venue cannot exceed 100 characters."),
 
-  event_datetime: z.string().min(1, "Please select a date and time."),
+  event_datetime: z
+    .string()
+    .min(1, "Please select a date and time.")
+    .refine((value) => new Date(value).getTime() > Date.now(), {
+      message: "Event date and time must be in the future.",
+    }),
 
   max_participants: z.coerce
     .number()
