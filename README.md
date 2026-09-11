@@ -159,3 +159,12 @@ At least one feature branch should remain visible in the GitHub repository histo
 - [MoSCoW prioritization](docs/07-MoSCoW-Prioritization.md)
 - [Architecture diagram](docs/Orvio-Architecture.drawio.png)
 
+## Software Design
+
+Orvio uses a layered architecture on Supabase BaaS: Presentation (Next.js App Router + React), Application (Server Actions + Zod validation), Service/Domain (events, registrations, admin), Data Access (typed Supabase client), and the Supabase platform (Auth, PostgreSQL with RLS, Storage, RPC). Business logic is kept in plain service functions so it stays testable and independent of the UI framework. Shared Zod schemas and database-level Row-Level Security provide defense in depth.
+
+Design artifacts live in [`docs/design/`](docs/design/):
+
+- [High-Level Architecture (PNG)](docs/design/orvioHLdiagram.png) — layered diagram
+- [Architecture source (Draw.io)](docs/design/orvioHLdiagram.drawio) — editable
+- Figma screenshots and `.fig` file for the six core screens (landing, login, sign up, dashboard, create event, browse/detail)
