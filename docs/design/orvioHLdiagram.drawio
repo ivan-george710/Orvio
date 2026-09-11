@@ -1,0 +1,206 @@
+<mxfile host="app.diagrams.net" version="24.0.0" type="device">
+  <diagram id="orvio-hll-architecture-v5" name="High-Level Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Orvio — High-Level Architecture" style="text;html=1;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;fontColor=#1F2937;" vertex="1" parent="1">
+          <mxGeometry x="0" y="20" width="1160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Layered architecture on Supabase BaaS" style="text;html=1;fontSize=13;align=center;verticalAlign=middle;fontColor=#6B7280;" vertex="1" parent="1">
+          <mxGeometry x="0" y="52" width="1160" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- Users -->
+        <mxCell id="users" value="Users&#xa;Participants · Organizers · Admins" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Presentation Layer box -->
+        <mxCell id="pres-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="240" y="110" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="pres-label" value="PRESENTATION" style="text;html=1;fontSize=11;fontStyle=1;align=center;fontColor=#1E40AF;" vertex="1" parent="1">
+          <mxGeometry x="240" y="118" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" value="Next.js App&#xa;React + Tailwind + shadcn/ui&#xa;Server &amp; Client Components&#xa;Middleware (auth guard)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BFDBFE;strokeColor=#3B82F6;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="145" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Application Layer -->
+        <mxCell id="app-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#6EE7B7;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="110" width="260" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="app-label" value="APPLICATION" style="text;html=1;fontSize=11;fontStyle=1;align=center;fontColor=#065F46;" vertex="1" parent="1">
+          <mxGeometry x="560" y="118" width="260" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="actions" value="Server Actions&#xa;lib/actions/*.ts&#xa;&#xa;+ Validation (Zod)&#xa;lib/validations/*.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A7F3D0;strokeColor=#10B981;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="145" width="220" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Service Layer -->
+        <mxCell id="svc-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#FCD34D;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="240" y="320" width="580" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-label" value="SERVICE / DOMAIN" style="text;html=1;fontSize=11;fontStyle=1;align=center;fontColor=#92400E;" vertex="1" parent="1">
+          <mxGeometry x="240" y="328" width="580" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="events-svc" value="EventsService&#xa;create / approve / search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#D97706;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="358" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="reg-svc" value="RegistrationsService&#xa;register / cancel / count" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#D97706;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="358" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-svc" value="AdminService&#xa;users / roles / stats" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#D97706;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="358" width="160" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Data Access -->
+        <mxCell id="data-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#C4B5FD;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="240" y="500" width="580" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="data-label" value="DATA ACCESS" style="text;html=1;fontSize=11;fontStyle=1;align=center;fontColor=#5B21B6;" vertex="1" parent="1">
+          <mxGeometry x="240" y="505" width="580" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="supabase-client" value="Supabase Client SDK  ·  lib/supabase/{server,client,middleware}.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDD6FE;strokeColor=#8B5CF6;fontSize=12;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="528" width="540" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Supabase Platform -->
+        <mxCell id="supa-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#FCA5A5;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="860" y="110" width="280" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="supa-label" value="SUPABASE PLATFORM" style="text;html=1;fontSize=11;fontStyle=1;align=center;fontColor=#991B1B;" vertex="1" parent="1">
+          <mxGeometry x="860" y="118" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="auth" value="Authentication&#xa;Email / password · JWT sessions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FECACA;strokeColor=#EF4444;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="150" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="PostgreSQL&#xa;profiles · events · registrations&#xa;Row-Level Security (RLS)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#FECACA;strokeColor=#EF4444;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="240" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="storage" value="Storage&#xa;Event banner images" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FECACA;strokeColor=#EF4444;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="360" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rpc" value="RPC Function&#xa;event_registration_count()&#xa;SECURITY DEFINER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FECACA;strokeColor=#EF4444;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="440" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Deployment -->
+        <mxCell id="deploy-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F4F6;strokeColor=#9CA3AF;fontSize=12;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="240" y="610" width="900" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="deploy-label" value="DEPLOYMENT" style="text;html=1;fontSize=11;fontStyle=1;align=center;fontColor=#374151;" vertex="1" parent="1">
+          <mxGeometry x="240" y="618" width="900" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="docker" value="Docker&#xa;Next.js container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D1FAE5;strokeColor=#10B981;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="645" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hosting" value="Cloud Hosting&#xa;HTTPS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BFDBFE;strokeColor=#3B82F6;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="645" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="supa-cloud" value="Supabase Cloud&#xa;Managed Auth + Postgres + Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FECACA;strokeColor=#EF4444;fontSize=11;fontStyle=0;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="730" y="645" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D1D5DB;fontSize=11;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="610" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="Legend" style="text;html=1;fontSize=11;fontStyle=1;align=left;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="50" y="618" width="150" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="Solid  →  request / data flow" style="text;html=1;fontSize=10;align=left;fontColor=#374151;" vertex="1" parent="1">
+          <mxGeometry x="50" y="642" width="150" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="Dashed → deployment link" style="text;html=1;fontSize=10;align=left;fontColor=#374151;" vertex="1" parent="1">
+          <mxGeometry x="50" y="662" width="150" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="Colours = layers" style="text;html=1;fontSize=10;align=left;fontColor=#374151;" vertex="1" parent="1">
+          <mxGeometry x="50" y="682" width="150" height="18" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#3B82F6;strokeWidth=2;endArrow=block;endFill=1;fontColor=#1E40AF;" edge="1" parent="1" source="users" target="frontend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#10B981;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="frontend" target="actions">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#D97706;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="actions" target="events-svc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="300" />
+              <mxPoint x="340" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#D97706;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="actions" target="reg-svc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="300" />
+              <mxPoint x="530" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#D97706;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="actions" target="admin-svc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="690" y="300" />
+              <mxPoint x="720" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#8B5CF6;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="events-svc" target="supabase-client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#8B5CF6;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="reg-svc" target="supabase-client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#8B5CF6;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="admin-svc" target="supabase-client">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#EF4444;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="supabase-client" target="auth">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="544" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#EF4444;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="supabase-client" target="db">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="544" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#EF4444;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="supabase-client" target="storage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="544" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#EF4444;strokeWidth=1.5;endArrow=block;endFill=1;fontColor=#991B1B;" edge="1" parent="1" source="reg-svc" target="rpc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="530" y="480" />
+              <mxPoint x="1000" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Deployment edges -->
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#6B7280;strokeWidth=1.5;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="docker" target="hosting">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" value="connects to" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;strokeColor=#6B7280;strokeWidth=1.5;endArrow=block;endFill=1;dashed=1;fontColor=#4B5563;" edge="1" parent="1" source="hosting" target="supa-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
