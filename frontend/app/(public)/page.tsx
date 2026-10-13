@@ -6,9 +6,11 @@ import Footer from "@/components/landing/Footer";
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Features />
-      <CTA />
+      <main>
+        <Hero />
+        <Features />
+        <CTA />
+      </main>
       <Footer />
     </>
   );

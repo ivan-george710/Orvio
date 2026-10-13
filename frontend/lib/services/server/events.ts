@@ -1,12 +1,10 @@
+import { getRegistrationSummaries } from "@/lib/services/server/registrations";
+import type { RegistrationSummary } from "@/lib/registrations";
 import { createClient } from "@/lib/supabase/server";
 import type { CreateEventInput } from "@/lib/validations/event";
 
 export type EventStatus =
-  | "pending"
-  | "approved"
-  | "rejected"
-  | "completed"
-  | "cancelled";
+  "pending" | "approved" | "rejected" | "completed" | "cancelled";
 
 export type Event = {
   id: string;
@@ -18,6 +16,8 @@ export type Event = {
   status: EventStatus;
   created_by: string;
   created_at: string;
+  organizer_name?: string;
+  registration?: RegistrationSummary;
 };
 
 export type UserRole = "participant" | "organizer" | "admin";
@@ -30,6 +30,18 @@ export type AdminEventStats = {
 
 const eventColumns =
   "id,title,description,venue,event_datetime,max_participants,status,created_by,created_at";
+
+const pendingEventColumns = `${eventColumns},creator:profiles(full_name)`;
+
+type PendingEventRow = Event & {
+  creator: {
+    full_name: string | null;
+  } | null;
+};
+
+function getOrganizerDisplayName(name: string | null | undefined) {
+  return name?.trim() || "Unknown Organizer";
+}
 
 async function getAuthenticatedUser() {
   const supabase = await createClient();
@@ -72,35 +84,41 @@ async function ensureAdmin() {
 export async function getMyEvents(): Promise<Event[]> {
   const { supabase, user } = await getAuthenticatedUser();
 
-  const { data, error } = await supabase
-    .from("events")
-    .select(eventColumns)
-    .eq("created_by", user.id)
-    .order("created_at", { ascending: false })
-    .returns<Event[]>();
-
-  if (error) {
-    throw error;
+  const events: Event[] = [];
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await supabase
+      .from("events")
+      .select(eventColumns)
+      .eq("created_by", user.id)
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range(offset, offset + 499)
+      .returns<Event[]>();
+    if (error) throw error;
+    events.push(...data);
+    if (data.length < 500) break;
   }
-
-  return data;
+  return withRegistrationSummaries(events);
 }
 
 export async function getApprovedEvents(): Promise<Event[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("events")
-    .select(eventColumns)
-    .eq("status", "approved")
-    .order("event_datetime", { ascending: true })
-    .returns<Event[]>();
-
-  if (error) {
-    throw error;
+  const events: Event[] = [];
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await supabase
+      .from("events")
+      .select(eventColumns)
+      .eq("status", "approved")
+      .order("event_datetime", { ascending: true })
+      .order("id")
+      .range(offset, offset + 499)
+      .returns<Event[]>();
+    if (error) throw error;
+    events.push(...data);
+    if (data.length < 500) break;
   }
-
-  return data;
+  return withRegistrationSummaries(events);
 }
 
 export async function getEventById(id: string): Promise<Event | null> {
@@ -116,7 +134,7 @@ export async function getEventById(id: string): Promise<Event | null> {
     throw error;
   }
 
-  return data;
+  return data ? (await withRegistrationSummaries([data]))[0] : null;
 }
 
 export async function getEditableEventById(id: string): Promise<Event | null> {
@@ -137,16 +155,19 @@ export async function getPendingEvents(): Promise<Event[]> {
 
   const { data, error } = await supabase
     .from("events")
-    .select(eventColumns)
+    .select(pendingEventColumns)
     .eq("status", "pending")
     .order("created_at", { ascending: false })
-    .returns<Event[]>();
+    .returns<PendingEventRow[]>();
 
   if (error) {
     throw error;
   }
 
-  return data;
+  return data.map(({ creator, ...event }) => ({
+    ...event,
+    organizer_name: getOrganizerDisplayName(creator?.full_name),
+  }));
 }
 
 export async function getAdminEventStats(): Promise<AdminEventStats> {
@@ -182,7 +203,7 @@ export async function getAdminEventStats(): Promise<AdminEventStats> {
 
 export async function updateEvent(
   id: string,
-  data: CreateEventInput
+  data: CreateEventInput,
 ): Promise<Event> {
   const { supabase, user } = await getAuthenticatedUser();
   const event = await getEventById(id);
@@ -272,4 +293,41 @@ export async function rejectEvent(id: string): Promise<Event> {
   }
 
   return data;
+}
+
+async function withRegistrationSummaries(events: Event[]): Promise<Event[]> {
+  const summaries = await getRegistrationSummaries(
+    events.map((event) => event.id),
+  );
+  return events.map((event) => ({
+    ...event,
+    registration: summaries[event.id],
+    organizer_name: summaries[event.id]?.organizer_name || event.organizer_name,
+  }));
+}
+export async function getAdminEvents(): Promise<Event[]> {
+  await ensureAdmin();
+  const supabase = await createClient();
+  const rows: PendingEventRow[] = [];
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await supabase
+      .from("events")
+      .select(pendingEventColumns)
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range(offset, offset + 499)
+      .returns<PendingEventRow[]>();
+    if (error)
+      throw new Error(
+        "Event registrations could not be loaded. Please try again.",
+      );
+    rows.push(...data);
+    if (data.length < 500) break;
+  }
+  return withRegistrationSummaries(
+    rows.map(({ creator, ...event }) => ({
+      ...event,
+      organizer_name: getOrganizerDisplayName(creator?.full_name),
+    })),
+  );
 }

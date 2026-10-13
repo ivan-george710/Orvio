@@ -1,72 +1,83 @@
-import { CalendarDays, ShieldCheck, Users } from "lucide-react";
-
-const features = [
+import {
+  ArrowUpRight,
+  CalendarSearch,
+  CalendarPlus,
+  LayoutDashboard,
+} from "lucide-react";
+import Link from "next/link";
+const steps = [
   {
-    icon: CalendarDays,
-    title: "Create & Manage Events",
+    icon: CalendarSearch,
+    title: "Find your next event.",
     description:
-      "Create professional events with registration limits, approval workflows, and scheduling in minutes.",
-    accent: "from-violet-600 to-indigo-500",
+      "Explore approved events. Get the details, find your venue, and register for an experience that interests you.",
+    href: "/events",
+    link: "Discover events",
   },
   {
-    icon: Users,
-    title: "Seamless Registration",
+    icon: CalendarPlus,
+    title: "Bring your idea to life.",
     description:
-      "Participants can discover, register, and keep track of upcoming events from one dashboard.",
-    accent: "from-indigo-600 to-blue-500",
+      "Choose a date, add your venue, and set your participant limit. Submit your event for review.",
+    href: "/events/create",
+    link: "Create an event",
   },
   {
-    icon: ShieldCheck,
-    title: "Built for Organizers",
+    icon: LayoutDashboard,
+    title: "Keep everything in view.",
     description:
-      "Manage registrations, monitor attendance, and collect feedback after every event.",
-    accent: "from-violet-700 to-cyan-500",
+      "Follow your submissions from pending to approved. Edit or withdraw pending events from your workspace.",
+    href: "/dashboard",
+    link: "Your dashboard",
   },
 ];
-
 export default function Features() {
   return (
-    <section id="features" className="premium-page py-28">
-      <div className="premium-container mx-auto max-w-7xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="premium-kicker px-4 py-2 text-sm font-bold">
-            Features
-          </span>
-
-          <h2 className="premium-title mt-6 text-4xl font-black sm:text-5xl">
-            Everything you need to run events.
+    <section
+      id="how-it-works"
+      className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:py-28"
+    >
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
+        <div>
+          <p className="eyebrow">01 / How ORVIO works</p>
+          <h2 className="mt-5 max-w-lg text-4xl font-semibold leading-[1.08] tracking-[-.05em] sm:text-5xl">
+            Good experiences.
+            <br />
+            <span className="text-muted-foreground">Less friction.</span>
           </h2>
-
-          <p className="premium-text mt-6 text-lg leading-8">
-            Whether you&apos;re hosting a workshop, hackathon, seminar or
-            meetup, Orvio gives you everything required to organize it.
-          </p>
         </div>
-
-        <div className="mt-16 grid gap-6 lg:grid-cols-3">
-          {features.map((feature) => {
-            const Icon = feature.icon;
-
-            return (
-              <div
-                key={feature.title}
-                className="premium-card animate-rise-in group rounded-3xl p-7"
-              >
-                <div className={`flex size-13 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.accent} text-white shadow-2xl shadow-violet-500/20`}>
-                  <Icon className="size-6" />
-                </div>
-
-                <h3 className="mt-7 text-xl font-black tracking-tight text-white">
-                  {feature.title}
-                </h3>
-
-                <p className="mt-3 leading-7 text-slate-300/75">
-                  {feature.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+        <p className="max-w-md text-base leading-7 text-muted-foreground lg:justify-self-end">
+          From the first idea to your next registration, a clear path to
+          bringing people together.
+        </p>
+      </div>
+      <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
+        {steps.map((step, i) => (
+          <article
+            key={step.title}
+            className="group border-t border-border pt-6"
+          >
+            <div className="flex items-center justify-between">
+              <step.icon className="size-6 text-primary" aria-hidden="true" />
+              <span className="font-mono text-xs text-muted-foreground">
+                0{i + 1}
+              </span>
+            </div>
+            <h3 className="mt-9 text-xl font-semibold tracking-tight">
+              {step.title}
+            </h3>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              {step.description}
+            </p>
+            <Link
+              href={step.href}
+              className="mt-6 inline-flex min-h-11 items-center gap-3 text-sm font-medium hover:text-primary"
+            >
+              {step.link}
+              <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5" />
+            </Link>
+          </article>
+        ))}
       </div>
     </section>
   );

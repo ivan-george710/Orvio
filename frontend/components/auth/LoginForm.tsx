@@ -10,7 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function LoginForm() {
+export default function LoginForm({
+  redirectTo = "/dashboard",
+}: {
+  redirectTo?: string;
+}) {
   const supabase = createClient();
   const router = useRouter();
 
@@ -38,13 +42,12 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(redirectTo);
     router.refresh();
   }
 
   return (
     <form onSubmit={handleLogin} className="space-y-5">
-
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -68,30 +71,27 @@ export default function LoginForm() {
       </div>
 
       {error && (
-        <p className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100">
+        <p
+          role="alert"
+          className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100"
+        >
           {error}
         </p>
       )}
 
-      <Button
-        type="submit"
-        disabled={loading}
-        size="lg"
-        className="w-full"
-      >
+      <Button type="submit" disabled={loading} size="lg" className="w-full">
         {loading ? "Logging in..." : "Login"}
       </Button>
 
-      <p className="text-center text-sm text-slate-300/75">
+      <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="font-bold text-cyan-200 underline-offset-4 hover:text-cyan-100 hover:underline"
+          className="font-bold text-primary underline-offset-4 hover:text-primary hover:underline"
         >
           Create one
         </Link>
       </p>
-
     </form>
   );
 }

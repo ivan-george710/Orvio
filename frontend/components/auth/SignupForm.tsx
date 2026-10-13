@@ -22,60 +22,52 @@ export default function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
- async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
+  async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-  console.log("Signup button clicked");
+    setError("");
 
-  setError("");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-  if (password !== confirmPassword) {
-    console.log("Passwords don't match");
-    setError("Passwords do not match.");
-    return;
-  }
+    setLoading(true);
 
-  setLoading(true);
-
-  console.log("Calling Supabase...");
-
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
       },
-    },
-  });
+    });
 
-  console.log("Response:", data, error);
+    setLoading(false);
 
-  setLoading(false);
+    if (error) {
+      setError(error.message);
+      return;
+    }
 
-  if (error) {
-    console.log("Signup error:", error);
-    setError(error.message);
-    return;
+    router.push("/dashboard");
   }
-
-  console.log("Redirecting...");
-  router.push("/dashboard");
-}
   return (
     <form onSubmit={handleSignup} className="space-y-5">
-
       <div className="space-y-2">
-        <Label>Full Name</Label>
+        <Label htmlFor="full-name">Full Name</Label>
         <Input
+          id="full-name"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Email</Label>
+        <Label htmlFor="signup-email">Email</Label>
         <Input
+          id="signup-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -83,8 +75,9 @@ export default function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label>Password</Label>
+        <Label htmlFor="signup-password">Password</Label>
         <Input
+          id="signup-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -92,8 +85,9 @@ export default function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label>Confirm Password</Label>
+        <Label htmlFor="confirm-password">Confirm Password</Label>
         <Input
+          id="confirm-password"
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
@@ -101,25 +95,23 @@ export default function SignupForm() {
       </div>
 
       {error && (
-        <p className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100">
+        <p
+          role="alert"
+          className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100"
+        >
           {error}
         </p>
       )}
 
-      <Button
-  type="submit"
-  disabled={loading}
-  size="lg"
-  className="w-full"
->
-  {loading ? "Creating Account..." : "Create Account"}
-</Button>
+      <Button type="submit" disabled={loading} size="lg" className="w-full">
+        {loading ? "Creating Account..." : "Create Account"}
+      </Button>
 
-      <p className="text-center text-sm text-slate-300/75">
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-bold text-cyan-200 underline-offset-4 hover:text-cyan-100 hover:underline"
+          className="font-bold text-primary underline-offset-4 hover:text-primary hover:underline"
         >
           Login
         </Link>

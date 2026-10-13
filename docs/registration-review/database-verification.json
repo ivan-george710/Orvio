@@ -1,0 +1,21 @@
+{
+  "project": "tpvnwjqvautcysfsjstu",
+  "migrations": [
+    "20261011054251_complete_event_registrations",
+    "20261011054420_harden_existing_role_helper"
+  ],
+  "preserved": {
+    "auth_users": 6,
+    "profiles": 6,
+    "events": 3,
+    "registrations": 1,
+    "registration_fingerprint": "d7d68c52916bff89d5d4398b36b1d205"
+  },
+  "remaining_test_events": 0,
+  "remaining_test_profiles": 0,
+  "authenticated_registration_write_privileges": false,
+  "anonymous_mutation_rpc_privileges": false,
+  "security_advisors": [
+    "Existing auth_leaked_password_protection setting is disabled"
+  ]
+}

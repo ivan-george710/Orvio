@@ -35,7 +35,9 @@ export default function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
         setOpen(false);
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to delete event.");
+        setError(
+          err instanceof Error ? err.message : "Failed to delete event.",
+        );
       }
     });
   }
@@ -57,7 +59,10 @@ export default function DeleteEventButton({ eventId }: DeleteEventButtonProps) {
         </DialogHeader>
 
         {error && (
-          <p className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100">
+          <p
+            role="alert"
+            className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100"
+          >
             {error}
           </p>
         )}

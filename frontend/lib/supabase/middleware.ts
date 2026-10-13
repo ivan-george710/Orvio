@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request,
   });
 
@@ -20,7 +20,7 @@ export async function updateSession(request: NextRequest) {
           });
         },
       },
-    }
+    },
   );
 
   const {
@@ -31,13 +31,13 @@ export async function updateSession(request: NextRequest) {
 
   const protectedRoutes = [
     "/dashboard",
+    "/registrations",
     "/admin",
     "/events/create",
   ];
 
   const isProtectedRoute = protectedRoutes.some(
-    (route) =>
-      pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   if (!user && isProtectedRoute) {

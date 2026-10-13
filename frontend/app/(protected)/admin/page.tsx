@@ -1,9 +1,12 @@
+import Link from "next/link";
+import EventCard from "@/components/events/EventCard";
 import { redirect } from "next/navigation";
 import { CalendarDays, ClipboardList, MapPin, Users } from "lucide-react";
 
 import AdminEventReviewDialog from "@/components/admin/AdminEventReviewDialog";
 import {
   getAdminEventStats,
+  getAdminEvents,
   getCurrentUserRole,
   getPendingEvents,
 } from "@/lib/services/server/events";
@@ -25,9 +28,10 @@ export default async function AdminPage() {
     redirect("/dashboard");
   }
 
-  const [pendingEvents, stats] = await Promise.all([
+  const [pendingEvents, stats, allEvents] = await Promise.all([
     getPendingEvents(),
     getAdminEventStats(),
+    getAdminEvents(),
   ]);
 
   const statCards = [
@@ -50,10 +54,11 @@ export default async function AdminPage() {
 
   return (
     <main className="premium-page">
-      <div className="premium-container mx-auto max-w-7xl px-6 py-10 sm:px-8">
-        <div className="premium-panel rounded-[2rem] p-6">
-          <h1 className="premium-title text-4xl font-black">
-            Admin Dashboard
+      <div className="premium-container mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16">
+        <div className="border-b border-border pb-9">
+          <p className="eyebrow mb-4">Administration / Moderation console</p>
+          <h1 className="premium-title text-4xl font-semibold">
+            Event moderation
           </h1>
 
           <p className="premium-text mt-2">
@@ -65,12 +70,12 @@ export default async function AdminPage() {
           {statCards.map((stat) => (
             <div
               key={stat.label}
-              className="premium-card rounded-3xl p-5"
+              className="rounded-xl border border-border bg-carbon p-6"
             >
-              <p className="text-sm font-bold text-slate-300/75">
+              <p className="text-sm font-bold text-muted-foreground">
                 {stat.label}
               </p>
-              <p className={`mt-4 text-4xl font-black ${stat.tone}`}>
+              <p className={`mt-4 text-5xl font-semibold ${stat.tone}`}>
                 {stat.value}
               </p>
             </div>
@@ -78,16 +83,16 @@ export default async function AdminPage() {
         </section>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-black text-white">
+          <h2 className="text-2xl font-semibold text-foreground">
             Pending Events
           </h2>
 
           {pendingEvents.length === 0 ? (
-            <div className="premium-empty mt-8 rounded-3xl px-6 py-14 text-center">
-              <h3 className="text-2xl font-black text-white">
+            <div className="premium-empty mt-8 rounded-xl px-6 py-14 text-center">
+              <h3 className="text-2xl font-semibold text-foreground">
                 No pending events
               </h3>
-              <p className="mt-2 text-slate-300/75">
+              <p className="mt-2 text-muted-foreground">
                 All submitted events have been reviewed.
               </p>
             </div>
@@ -96,14 +101,14 @@ export default async function AdminPage() {
               {pendingEvents.map((event) => (
                 <article
                   key={event.id}
-                  className="premium-card flex min-w-0 flex-col rounded-3xl p-5"
+                  className="premium-card flex min-w-0 flex-col rounded-xl p-5"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <p className="text-xs font-bold uppercase text-violet-200">
+                      <p className="text-xs font-bold uppercase text-primary">
                         Pending review
                       </p>
-                      <h3 className="mt-2 line-clamp-2 text-xl font-black text-white">
+                      <h3 className="mt-2 line-clamp-2 text-xl font-semibold text-foreground">
                         {event.title}
                       </h3>
                     </div>
@@ -113,54 +118,62 @@ export default async function AdminPage() {
                     </span>
                   </div>
 
-                  <p className="mt-4 line-clamp-4 leading-7 text-slate-300/78">
+                  <p className="mt-4 line-clamp-4 leading-7 text-muted-foreground">
                     {event.description}
                   </p>
 
-                  <div className="mt-5 grid gap-3 text-sm text-slate-200">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="size-4 text-cyan-200" aria-hidden="true" />
-                      <span className="truncate font-bold">{event.venue}</span>
+                  <div className="mt-5 grid min-w-0 grid-cols-1 gap-3 text-sm text-muted-foreground">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <MapPin
+                        className="size-4 shrink-0 text-primary"
+                        aria-hidden="true"
+                      />
+                      <span className="min-w-0 truncate font-medium">
+                        {event.venue}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                       <CalendarDays
-                        className="size-4 text-violet-200"
+                        className="size-4 shrink-0 text-primary"
                         aria-hidden="true"
                       />
                       <span className="font-bold">
                         {new Date(event.event_datetime).toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="size-4 text-blue-200" aria-hidden="true" />
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Users
+                        className="size-4 shrink-0 text-primary"
+                        aria-hidden="true"
+                      />
                       <span className="font-bold">
                         {event.max_participants} max participants
                       </span>
                     </div>
                   </div>
 
-                  <div className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-400">
+                  <div className="mt-5 mb-5 border-t border-border pt-4 text-xs text-muted-foreground">
                     <p>
                       Submitted{" "}
-                      <span className="font-bold text-slate-200">
+                      <span className="font-bold text-muted-foreground">
                         {new Date(event.created_at).toLocaleString()}
                       </span>
                     </p>
                     <p className="mt-1 break-all">
-                      Creator ID:{" "}
-                      <span className="font-bold text-slate-200">
-                        {event.created_by}
+                      Organizer:{" "}
+                      <span className="font-bold text-muted-foreground">
+                        {event.organizer_name?.trim() || "Unknown Organizer"}
                       </span>
                     </p>
                   </div>
 
-                  <div className="mt-5 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/8 p-3">
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-300">
+                  <div className="mt-auto flex items-center justify-between gap-3 rounded-2xl border border-border bg-secondary p-3">
+                    <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground">
                       <ClipboardList
-                        className="size-4 text-violet-200"
+                        className="size-4 shrink-0 text-primary"
                         aria-hidden="true"
                       />
-                      Ready for review
+                      Review submission
                     </div>
 
                     <AdminEventReviewDialog event={event} />
@@ -168,6 +181,36 @@ export default async function AdminPage() {
                 </article>
               ))}
             </div>
+          )}
+        </section>
+        <section className="mt-14 border-t border-border pt-10">
+          <p className="eyebrow">Across every event</p>
+          <h2 className="mt-3 text-2xl font-semibold">
+            Registration management
+          </h2>
+          <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {allEvents.map((event) => (
+              <article key={event.id} className="flex min-w-0 flex-col">
+                <EventCard event={event} />
+                <div className="mt-3 rounded-lg border border-border bg-carbon p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Organizer:{" "}
+                    {event.organizer_name?.trim() || "Unknown Organizer"}
+                  </p>
+                  <Link
+                    href={`/events/${event.id}/attendees`}
+                    className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-primary"
+                  >
+                    View Registrations &rarr;
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+          {!allEvents.length && (
+            <p className="premium-empty mt-6 rounded-xl p-8">
+              No events to inspect yet.
+            </p>
           )}
         </section>
       </div>

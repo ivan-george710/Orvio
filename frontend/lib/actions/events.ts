@@ -8,15 +8,8 @@ import {
   rejectEvent,
   updateEvent,
 } from "@/lib/services/server/events";
-import { registerForEvent } from "@/lib/services/server/registrations";
+
 import type { CreateEventInput } from "@/lib/validations/event";
-
-export async function registerForEventAction(eventId: string) {
-  await registerForEvent(eventId);
-
-  revalidatePath(`/events/${eventId}`);
-  revalidatePath("/registrations");
-}
 
 export async function updateEventAction(id: string, data: CreateEventInput) {
   await updateEvent(id, data);
