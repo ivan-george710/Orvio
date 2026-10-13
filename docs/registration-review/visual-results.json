@@ -1,0 +1,9 @@
+{
+  "runAt": "2026-10-11T06:02:42.515Z",
+  "results": [
+    "Final visual verification: desktop, mobile, cancellation dialog, capacity refresh and attendee layout passed."
+  ],
+  "browserErrors": [],
+  "fixturesCleaned": true,
+  "completed": true
+}

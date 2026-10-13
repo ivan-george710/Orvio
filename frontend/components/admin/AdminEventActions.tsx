@@ -1,17 +1,19 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 
 import { approveEventAction, rejectEventAction } from "@/lib/actions/events";
 import { Button } from "@/components/ui/button";
 
 type AdminEventActionsProps = {
   eventId: string;
+  onSuccess?: () => void;
 };
 
-export default function AdminEventActions({ eventId }: AdminEventActionsProps) {
-  const router = useRouter();
+export default function AdminEventActions({
+  eventId,
+  onSuccess,
+}: AdminEventActionsProps) {
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -21,7 +23,7 @@ export default function AdminEventActions({ eventId }: AdminEventActionsProps) {
     startTransition(async () => {
       try {
         await action(eventId);
-        router.refresh();
+        onSuccess?.();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Action failed.");
       }
@@ -31,7 +33,10 @@ export default function AdminEventActions({ eventId }: AdminEventActionsProps) {
   return (
     <div className="space-y-3">
       {error && (
-        <p className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100">
+        <p
+          role="alert"
+          className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100"
+        >
           {error}
         </p>
       )}
@@ -40,6 +45,7 @@ export default function AdminEventActions({ eventId }: AdminEventActionsProps) {
         <Button
           type="button"
           size="sm"
+          variant="success"
           disabled={isPending}
           onClick={() => runAction(approveEventAction)}
         >

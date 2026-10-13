@@ -50,7 +50,7 @@ export default function AdminUserRoleSelect({
         value={currentRole}
         disabled={isPending}
         onChange={(event) => handleChange(event.target.value as UserRole)}
-        className="h-10 w-full rounded-xl border border-white/14 bg-[#0b1220] px-3 text-sm font-bold capitalize text-white outline-none focus:border-cyan-200/40"
+        className="h-10 w-full rounded-xl border border-border bg-carbon px-3 text-sm font-bold capitalize text-foreground outline-none focus:border-primary/40"
       >
         {roles.map((item) => (
           <option key={item} value={item}>

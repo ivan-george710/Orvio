@@ -1,26 +1,32 @@
 import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
-
+import { ArrowUpRight } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 export default function CTA() {
   return (
-    <section className="premium-page py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="premium-panel rounded-[2rem] px-8 py-16 text-center text-white sm:px-10 sm:py-20">
-          <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
-            Ready to host your next event?
+    <section className="relative isolate overflow-hidden border-y border-border bg-secondary/40">
+      <div
+        className="ambient absolute -left-40 top-0 h-full w-[700px]"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 py-16 sm:px-8 lg:flex-row lg:items-center lg:py-24">
+        <div>
+          <p className="eyebrow">02 / Your next chapter</p>
+          <h2 className="mt-5 text-4xl font-semibold tracking-[-.05em] sm:text-5xl">
+            Something great
+            <br />
+            starts with you.
           </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300/80">
-            Join organizers who are simplifying event management with Orvio.
+          <p className="mt-5 max-w-md leading-7 text-muted-foreground">
+            Turn an idea into an event. Give your community a reason to come
+            together.
           </p>
-
-          <Link href="/signup">
-            <Button className="mt-10" size="lg">
-              Get Started
-            </Button>
-          </Link>
         </div>
+        <Link
+          href="/events/create"
+          className={buttonVariants({ size: "lg", className: "w-fit" })}
+        >
+          Create an Event <ArrowUpRight className="size-4" />
+        </Link>
       </div>
     </section>
   );

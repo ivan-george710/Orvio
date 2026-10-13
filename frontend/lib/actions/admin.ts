@@ -23,9 +23,11 @@ function revalidateAdmin(eventId?: string) {
   revalidatePath("/admin");
   revalidatePath("/events");
   revalidatePath("/dashboard");
+  revalidatePath("/registrations");
 
   if (eventId) {
     revalidatePath(`/events/${eventId}`);
+    revalidatePath(`/events/${eventId}/attendees`);
   }
 }
 
@@ -62,6 +64,7 @@ export async function updateUserRoleAction(
     await updateUserRole(userId, role);
     revalidatePath("/admin");
     revalidatePath("/dashboard");
+    revalidatePath("/registrations");
     return { ok: true };
   } catch (error) {
     return fail(error, "Failed to update user role.");

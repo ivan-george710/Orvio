@@ -1,17 +1,12 @@
 import Link from "next/link";
+import { formatEventDate, formatParticipantCap } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 
 import { statusBadgeClasses } from "@/components/events/EventCard";
 import RegisterEventButton from "@/components/events/RegisterEventButton";
-import { createClient } from "@/lib/supabase/server";
 import { getEventById } from "@/lib/services/server/events";
-import {
-  getEventParticipants,
-  getEventRegistrationCount,
-  getMyRegistrationForEvent,
-} from "@/lib/services/server/registrations";
-import { formatEventDate, formatParticipantCap } from "@/lib/utils";
 
 type EventDetailsPageProps = {
   params: Promise<{
@@ -24,153 +19,117 @@ export default async function EventDetailsPage({
 }: EventDetailsPageProps) {
   const { id } = await params;
   const event = await getEventById(id);
-
-  if (!event) {
-    notFound();
-  }
-
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const registrationCount = await getEventRegistrationCount(id);
-  const isOrganizer = Boolean(user && user.id === event.created_by);
-  const myRegistration = user && !isOrganizer
-    ? await getMyRegistrationForEvent(id)
-    : null;
-  const participants = isOrganizer ? await getEventParticipants(id) : [];
-  const isFull =
-    event.max_participants != null &&
-    registrationCount >= event.max_participants;
-
-  let disabledReason: string | null = null;
-
-  if (event.status !== "approved") {
-    disabledReason =
-      event.status === "pending"
-        ? "This event is awaiting admin approval."
-        : `This event is ${event.status} and is not open for registration.`;
-  } else if (isOrganizer) {
-    disabledReason = "You created this event, so you cannot register for it.";
-  } else if (!user) {
-    disabledReason = "Log in to register for this event.";
+  if (!event) {
+    notFound();
   }
 
   return (
     <main className="premium-page">
-      <div className="premium-container mx-auto max-w-4xl px-6 py-10 sm:px-8">
+      <div className="premium-container mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16">
         <Link
           href="/events"
-          className="inline-flex h-10 items-center justify-center rounded-xl border border-white/14 bg-white/8 px-3.5 text-sm font-bold text-slate-100 shadow-lg shadow-black/20 backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-cyan-200/40 hover:bg-cyan-200/10 hover:text-cyan-100"
+          className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground"
         >
-          Back to Events
+          &larr; Back to Events
         </Link>
-
-        <article className="premium-panel mt-8 rounded-[2rem] p-6 sm:p-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <h1 className="premium-title text-4xl font-black">
-              {event.title}
-            </h1>
-
+        <article className="mt-8">
+          <div className="border-b border-border pb-10">
             <span
-              className={`w-fit rounded-full border px-3 py-1 text-sm font-bold capitalize shadow-lg backdrop-blur-xl ${statusBadgeClasses[event.status]}`}
+              className={`status-badge ${statusBadgeClasses[event.status]}`}
             >
               {event.status}
             </span>
+            <h1 className="premium-title mt-6 max-w-4xl text-5xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
+              {event.title}
+            </h1>
           </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/8 p-4 text-slate-200">
-              <MapPin className="size-5 text-rose-200" aria-hidden="true" />
-              <div>
-                <p className="text-xs font-bold uppercase text-slate-400">
-                  Venue
-                </p>
-                <p className="mt-1 text-sm font-bold">{event.venue}</p>
+          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-16">
+            <div>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="flex gap-4">
+                  <CalendarDays
+                    className="mt-1 size-5 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <p className="eyebrow !text-muted-foreground">
+                      Date &amp; time
+                    </p>
+                    <p className="mt-2 text-lg font-medium">
+                      {formatEventDate(event.event_datetime)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <MapPin
+                    className="mt-1 size-5 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <div className="min-w-0">
+                    <p className="eyebrow !text-muted-foreground">The venue</p>
+                    <p className="mt-2 break-words text-lg font-medium">
+                      {event.venue}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/8 p-4 text-slate-200">
-              <CalendarDays
-                className="size-5 text-cyan-200"
-                aria-hidden="true"
-              />
-              <div>
-                <p className="text-xs font-bold uppercase text-slate-400">
-                  Date & Time
-                </p>
-                <p className="mt-1 text-sm font-bold">
-                  {formatEventDate(event.event_datetime)}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/8 p-4 text-slate-200">
-              <Users className="size-5 text-amber-200" aria-hidden="true" />
-              <div>
-                <p className="text-xs font-bold uppercase text-slate-400">
-                  Registered
-                </p>
-                <p className="mt-1 text-sm font-bold">
-                  {registrationCount} / {formatParticipantCap(event.max_participants)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <section className="mt-8 rounded-2xl border border-white/10 bg-white/8 p-5">
-            <h2 className="text-xl font-black text-white">
-              Description
-            </h2>
-            <p className="mt-3 whitespace-pre-line leading-7 text-slate-300/78">
-              {event.description}
-            </p>
-          </section>
-
-          {isOrganizer && (
-            <section className="mt-8 rounded-2xl border border-white/10 bg-white/8 p-5">
-              <h2 className="text-xl font-black text-white">Participants</h2>
-              {participants.length === 0 ? (
-                <p className="mt-3 text-sm text-slate-300/75">
-                  No one has registered yet.
-                </p>
-              ) : (
-                <ul className="mt-4 space-y-2">
-                  {participants.map((participant) => (
-                    <li
-                      key={participant.id}
-                      className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm"
-                    >
-                      <span className="font-bold text-white">
-                        {participant.full_name}
-                      </span>
-                      <span className="text-slate-400">
-                        {formatEventDate(participant.registered_at)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+              {event.organizer_name?.trim() && (
+                <div className="mt-8 border-t border-border pt-6">
+                  <p className="eyebrow !text-muted-foreground">Organized by</p>
+                  <p className="mt-2 text-lg font-medium">
+                    {event.organizer_name}
+                  </p>
+                </div>
               )}
-            </section>
-          )}
-
-          <div className="mt-8 border-t border-white/10 pt-6">
-            {!user && event.status === "approved" ? (
-              <Link
-                href="/login"
-                className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-white/14 bg-white/8 text-sm font-bold text-slate-100 transition-all hover:border-cyan-200/40 hover:bg-cyan-200/10 hover:text-cyan-100"
-              >
-                Log in to register
-              </Link>
-            ) : (
+              <section className="mt-10 border-t border-border pt-8">
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  About the event
+                </h2>
+                <p className="mt-5 whitespace-pre-line break-words leading-8 text-muted-foreground">
+                  {event.description}
+                </p>
+              </section>
+            </div>
+            <aside className="premium-panel h-fit rounded-xl p-6 sm:p-8">
+              <p className="eyebrow">Be part of it</p>
+              <h2 className="mt-4 text-2xl font-semibold tracking-tight">
+                Your next experience.
+              </h2>
+              <div className="my-7 flex items-center gap-3 border-y border-border py-5">
+                <Users className="size-5 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="text-xl font-medium">
+                    {formatParticipantCap(event.max_participants)}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Maximum participants
+                  </p>
+                </div>
+              </div>
               <RegisterEventButton
+                event={event}
+                initialNow={event.registration?.checked_at ?? 0}
                 eventId={event.id}
-                initiallyRegistered={Boolean(myRegistration)}
-                isFull={isFull}
-                disabledReason={disabledReason}
+                authenticated={!!user}
+                registered={event.registration?.is_registered ?? false}
+                status={event.status}
+                start={event.event_datetime}
+                remaining={event.registration?.remaining_spots ?? 0}
               />
-            )}
+              {event.registration?.can_manage && (
+                <Link
+                  className="mt-5 inline-flex min-h-11 items-center text-sm text-primary"
+                  href={`/events/${event.id}/attendees`}
+                >
+                  View Attendees &rarr;
+                </Link>
+              )}
+            </aside>
           </div>
         </article>
       </div>

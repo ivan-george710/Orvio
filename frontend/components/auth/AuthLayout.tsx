@@ -1,50 +1,51 @@
 import { ReactNode } from "react";
-import { CalendarDays, ShieldCheck } from "lucide-react";
-
+import { ArrowUpRight, CalendarDays } from "lucide-react";
 interface AuthLayoutProps {
   title: string;
   subtitle: string;
   children: ReactNode;
 }
-
 export default function AuthLayout({
   title,
   subtitle,
   children,
 }: AuthLayoutProps) {
   return (
-    <main className="premium-page flex min-h-screen">
-      <div className="premium-container hidden w-1/2 items-center justify-center p-12 text-white lg:flex">
-        <div className="max-w-md">
-          <div className="premium-kicker mb-10 px-3 py-1.5 text-sm font-bold">
-            <CalendarDays className="size-4" />
-            Orvio
+    <main className="relative isolate flex flex-1 items-center overflow-hidden">
+      <div
+        className="ambient absolute -left-56 top-0 h-[850px] w-[850px]"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-5 py-12 sm:px-8 lg:grid-cols-2 lg:gap-24 lg:py-20">
+        <div className="hidden flex-col justify-between py-8 lg:flex">
+          <div>
+            <p className="eyebrow">
+              <CalendarDays className="size-4" aria-hidden="true" /> Your next
+              experience starts here
+            </p>
+            <h2 className="mt-8 text-7xl font-semibold leading-[.98] tracking-[-.065em]">
+              Be there.
+              <br />
+              <span className="text-primary">Be part of it.</span>
+            </h2>
+            <p className="mt-8 max-w-sm text-lg leading-8 text-muted-foreground">
+              Discover something new. Bring people together. Make your next
+              moment matter.
+            </p>
           </div>
-
-          <h1 className="text-5xl font-black leading-tight tracking-tight">
-            Welcome to Orvio
-          </h1>
-
-          <p className="mt-6 text-lg leading-8 text-slate-300/78">
-            Manage events, registrations and participants from one modern
-            platform.
-          </p>
-
-          <div className="premium-panel mt-10 flex items-center gap-3 rounded-3xl p-4 text-sm text-slate-300">
-            <ShieldCheck className="size-5 text-emerald-200" />
-            Secure access for organizers, participants, and admins.
+          <div className="mt-16 flex items-center gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
+            <ArrowUpRight className="size-5 text-primary" aria-hidden="true" />{" "}
+            Events, ideas, and the people behind them.
           </div>
         </div>
-      </div>
-
-      <div className="premium-container flex flex-1 items-center justify-center p-6 sm:p-8">
-        <div className="premium-panel w-full max-w-md rounded-[2rem] p-8">
-          <h2 className="text-3xl font-black tracking-tight text-white">
+        <div className="animate-rise-in mx-auto w-full max-w-md self-center rounded-2xl border border-border bg-secondary/40 p-6 sm:p-10">
+          <p className="eyebrow mb-6">ORVIO / Your account</p>
+          <h1 className="text-3xl font-semibold tracking-[-.045em] sm:text-4xl">
             {title}
-          </h2>
-
-          <p className="mt-2 text-slate-300/75">{subtitle}</p>
-
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            {subtitle}
+          </p>
           <div className="mt-8">{children}</div>
         </div>
       </div>

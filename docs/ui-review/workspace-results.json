@@ -1,0 +1,250 @@
+{
+  "results": [
+    {
+      "screen": "dashboard",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "admin",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "details",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "create",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "edit",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "profile",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "registrations",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "dashboard",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "admin",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "details",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "create",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "edit",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "profile",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "registrations",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "dashboard",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "admin",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "details",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "create",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "edit",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "profile",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "registrations",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "dashboard",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "admin",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "details",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "create",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "edit",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "profile",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "registrations",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "dashboard",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "admin",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "details",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "create",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "edit",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "profile",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "registrations",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": []
+}

@@ -48,50 +48,69 @@ export default function CreateEventForm({
       }
       router.push("/dashboard");
     } catch (err) {
-  console.error(err);
-  setSubmitError(
-    err instanceof Error
-      ? err.message
-      : `Failed to ${isEditing ? "update" : "create"} event.`
-  );
-}
+      console.error(err);
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : `Failed to ${isEditing ? "update" : "create"} event.`,
+      );
+    }
   }
 
   const errorClassName = "text-sm font-bold text-red-200";
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div className="space-y-2.5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid gap-6 sm:grid-cols-2"
+    >
+      <div className="space-y-2.5 sm:col-span-2">
         <Label htmlFor="title">Title</Label>
-        <Input id="title" placeholder="HackNight 2026" {...register("title")} />
+        <Input
+          id="title"
+          aria-invalid={Boolean(errors.title)}
+          aria-describedby={errors.title ? "title-error" : undefined}
+          placeholder="HackNight 2026"
+          {...register("title")}
+        />
         {errors.title && (
-          <p className={errorClassName}>{errors.title.message}</p>
+          <p id="title-error" role="alert" className={errorClassName}>
+            {errors.title.message}
+          </p>
         )}
       </div>
 
-      <div className="space-y-2.5">
+      <div className="space-y-2.5 sm:col-span-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
+          aria-invalid={Boolean(errors.description)}
+          aria-describedby={
+            errors.description ? "description-error" : undefined
+          }
           placeholder="Tell people what this event is about."
           {...register("description")}
         />
         {errors.description && (
-          <p className={errorClassName}>
+          <p id="description-error" role="alert" className={errorClassName}>
             {errors.description.message}
           </p>
         )}
       </div>
 
-      <div className="space-y-2.5">
+      <div className="space-y-2.5 sm:col-span-2">
         <Label htmlFor="venue">Venue</Label>
         <Input
           id="venue"
+          aria-invalid={Boolean(errors.venue)}
+          aria-describedby={errors.venue ? "venue-error" : undefined}
           placeholder="Community Hall"
           {...register("venue")}
         />
         {errors.venue && (
-          <p className={errorClassName}>{errors.venue.message}</p>
+          <p id="venue-error" role="alert" className={errorClassName}>
+            {errors.venue.message}
+          </p>
         )}
       </div>
 
@@ -99,11 +118,15 @@ export default function CreateEventForm({
         <Label htmlFor="event_datetime">Date and Time</Label>
         <Input
           id="event_datetime"
+          aria-invalid={Boolean(errors.event_datetime)}
+          aria-describedby={
+            errors.event_datetime ? "event_datetime-error" : undefined
+          }
           type="datetime-local"
           {...register("event_datetime")}
         />
         {errors.event_datetime && (
-          <p className={errorClassName}>
+          <p id="event_datetime-error" role="alert" className={errorClassName}>
             {errors.event_datetime.message}
           </p>
         )}
@@ -113,25 +136,41 @@ export default function CreateEventForm({
         <Label htmlFor="max_participants">Maximum Participants</Label>
         <Input
           id="max_participants"
+          aria-invalid={Boolean(errors.max_participants)}
+          aria-describedby={
+            errors.max_participants ? "max_participants-error" : undefined
+          }
           type="number"
           min="1"
           placeholder="50"
           {...register("max_participants")}
         />
         {errors.max_participants && (
-          <p className={errorClassName}>
+          <p
+            id="max_participants-error"
+            role="alert"
+            className={errorClassName}
+          >
             {errors.max_participants.message}
           </p>
         )}
       </div>
 
       {submitError && (
-        <p className="rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100">
+        <p
+          role="alert"
+          className="sm:col-span-2 rounded-2xl border border-red-300/30 bg-red-400/12 px-3.5 py-3 text-sm font-bold text-red-100"
+        >
           {submitError}
         </p>
       )}
 
-      <Button type="submit" disabled={isSubmitting} size="lg" className="w-full">
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        size="lg"
+        className="w-full sm:col-span-2"
+      >
         {isSubmitting
           ? isEditing
             ? "Updating..."

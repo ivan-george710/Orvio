@@ -8,6 +8,7 @@ import {
   rejectEvent,
   updateEvent,
 } from "@/lib/services/server/events";
+
 import {
   cancelRegistration,
   registerForEvent,

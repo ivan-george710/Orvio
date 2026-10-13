@@ -1,0 +1,20 @@
+{
+  "runAt": "2026-10-11T05:58:05.616Z",
+  "results": [
+    "Event creation and pending-event editing through browser: passed",
+    "Admin approval through browser: passed",
+    "Login return, register, confirmation, capacity and persisted registered state: passed",
+    "Live RPC duplicate, direct-insert, role-escalation and private-attendee protections: passed",
+    "Dashboard history, owner/admin attendees, unrelated user denied: passed",
+    "Accessible cancellation dialog, capacity release, re-registration and preserved history: passed",
+    "Connected database: three concurrent users, one slot, exactly one success: passed",
+    "Admin rejection through browser: passed",
+    "Public signup through browser, automatic profile creation and login: passed",
+    "Attendee pagination across 53 history records: passed",
+    "Three repeated cancellation/re-registration cycles without page reload: passed",
+    "Desktop/mobile overflow and browser runtime errors: passed"
+  ],
+  "browserErrors": [],
+  "fixturesCleaned": true,
+  "completed": true
+}

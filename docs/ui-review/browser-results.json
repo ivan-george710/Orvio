@@ -1,0 +1,268 @@
+{
+  "results": [
+    {
+      "route": "/",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/signup",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/events",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/ui-qa-preview",
+      "width": 375,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "review dialog",
+      "width": 375,
+      "fit": true,
+      "internalOverflow": false,
+      "focusRestored": true,
+      "violations": []
+    },
+    {
+      "route": "form validation",
+      "width": 375,
+      "invalid": 5,
+      "actionRequests": 0
+    },
+    {
+      "route": "/",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/signup",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/events",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/ui-qa-preview",
+      "width": 430,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "review dialog",
+      "width": 430,
+      "fit": true,
+      "internalOverflow": false,
+      "focusRestored": true,
+      "violations": []
+    },
+    {
+      "route": "form validation",
+      "width": 430,
+      "invalid": 5,
+      "actionRequests": 0
+    },
+    {
+      "route": "/",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/signup",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/events",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/ui-qa-preview",
+      "width": 768,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "review dialog",
+      "width": 768,
+      "fit": true,
+      "internalOverflow": false,
+      "focusRestored": true,
+      "violations": []
+    },
+    {
+      "route": "form validation",
+      "width": 768,
+      "invalid": 5,
+      "actionRequests": 0
+    },
+    {
+      "route": "/",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/signup",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/events",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/ui-qa-preview",
+      "width": 1024,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "review dialog",
+      "width": 1024,
+      "fit": true,
+      "internalOverflow": false,
+      "focusRestored": true,
+      "violations": []
+    },
+    {
+      "route": "form validation",
+      "width": 1024,
+      "invalid": 5,
+      "actionRequests": 0
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/signup",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/events",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "/ui-qa-preview",
+      "width": 1440,
+      "http": 200,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "route": "review dialog",
+      "width": 1440,
+      "fit": true,
+      "internalOverflow": false,
+      "focusRestored": true,
+      "violations": []
+    },
+    {
+      "route": "form validation",
+      "width": 1440,
+      "invalid": 5,
+      "actionRequests": 0
+    },
+    {
+      "route": "/events/create",
+      "loggedOutRedirect": "/login"
+    },
+    {
+      "route": "/dashboard",
+      "loggedOutRedirect": "/login"
+    },
+    {
+      "route": "/admin",
+      "loggedOutRedirect": "/login"
+    },
+    {
+      "reducedMotion": "none"
+    },
+    {
+      "firstKeyboardTarget": "Skip to content"
+    }
+  ],
+  "errors": []
+}

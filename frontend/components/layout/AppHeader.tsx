@@ -7,7 +7,7 @@ import {
   CalendarPlus,
   LayoutDashboard,
   ShieldCheck,
-  Sparkles,
+  Compass,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -16,8 +16,6 @@ import type { UserRole } from "@/lib/services/server/events";
 
 const appHistoryKey = "orvio:has-app-history";
 const lastPathKey = "orvio:last-path";
-const navLinkClasses =
-  "inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 text-sm font-bold text-slate-200 shadow-lg shadow-black/10 transition-all hover:-translate-y-0.5 hover:border-cyan-200/35 hover:bg-cyan-200/10 hover:text-cyan-100 sm:px-3.5";
 
 export default function AppHeader() {
   const pathname = usePathname();
@@ -117,70 +115,94 @@ export default function AppHeader() {
 
   const isAdmin = isAuthReady && isAuthenticated && userRole === "admin";
 
-  return (
-    <header className="sticky top-0 z-50 border-b border-violet-300/15 bg-[#080c19]/75 shadow-2xl shadow-black/25 backdrop-blur-2xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-[4.5rem] sm:px-6 lg:px-8">
-        <button
-          type="button"
-          onClick={handleBack}
-          className="group inline-flex min-w-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-left shadow-lg shadow-black/15 transition-all duration-300 hover:border-violet-300/35 hover:bg-violet-500/10 hover:shadow-violet-500/15 focus-visible:ring-4 focus-visible:ring-violet-400/25 focus-visible:outline-none sm:px-4"
-          aria-label="Go back in Orvio"
-        >
-          
-          <span className="truncate text-lg font-black tracking-normal text-white transition-colors duration-300 group-hover:text-violet-100 group-hover:[text-shadow:0_0_22px_rgba(139,92,246,0.45)] sm:text-xl">
-            ORVIO
-          </span>
-        </button>
+  const isActive = (href: string) =>
+    href === "/events"
+      ? pathname === href ||
+        (pathname.startsWith("/events/") && !pathname.includes("/create"))
+      : pathname === href;
 
+  return (
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 sm:py-4">
+        <div className="flex items-center justify-between gap-4">
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label="Go back in Orvio"
+            className="group inline-flex min-h-11 items-center gap-3 rounded-md"
+          >
+            <ArrowLeft
+              className="size-3.5 text-muted-foreground transition-transform group-hover:-translate-x-0.5"
+              aria-hidden="true"
+            />
+            <span className="brand-wordmark">
+              ORVIO<span className="text-primary">.</span>
+            </span>
+          </button>
+          <Link href="/" aria-label="ORVIO home" className="nav-link sm:hidden">
+            Home
+          </Link>
+        </div>
         <nav
-          className="flex min-w-0 items-center justify-end gap-2"
+          className="flex flex-wrap items-center gap-1"
           aria-label="Primary navigation"
         >
           <Link
             href="/events"
-            className={navLinkClasses}
+            className="nav-link"
+            aria-current={isActive("/events") ? "page" : undefined}
           >
-            <Sparkles className="hidden size-4 sm:block" aria-hidden="true" />
+            <Compass className="hidden size-4 md:block" aria-hidden="true" />
             Events
           </Link>
-
           {isAuthReady && isAuthenticated && (
             <Link
               href="/events/create"
-              className="hidden h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 text-sm font-bold text-slate-200 shadow-lg shadow-black/10 transition-all hover:-translate-y-0.5 hover:border-violet-300/35 hover:bg-violet-500/10 hover:text-violet-100 sm:inline-flex"
+              className="nav-link"
+              aria-current={isActive("/events/create") ? "page" : undefined}
             >
-              <CalendarPlus className="size-4" aria-hidden="true" />
-              <span className="hidden md:inline">Create</span>
+              <CalendarPlus
+                className="hidden size-4 md:block"
+                aria-hidden="true"
+              />
+              Create
             </Link>
           )}
-
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="inline-flex size-10 items-center justify-center rounded-xl border border-cyan-200/20 bg-cyan-300/10 text-cyan-100 shadow-lg shadow-cyan-500/10 transition-all hover:-translate-y-0.5 hover:border-cyan-100/45 hover:bg-cyan-300/15 hover:shadow-cyan-500/20 md:w-auto md:px-3.5"
-              aria-label="Admin"
-            >
-              <ShieldCheck className="size-4" aria-hidden="true" />
-              <span className="hidden text-sm font-bold md:inline">
-                Admin
-              </span>
-            </Link>
-          )}
-
           {isAuthReady && isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="inline-flex size-10 items-center justify-center rounded-xl border border-violet-300/20 bg-[linear-gradient(135deg,rgba(124,58,237,0.22),rgba(59,130,246,0.16))] text-white shadow-lg shadow-violet-500/15 transition-all hover:-translate-y-0.5 hover:border-violet-200/45 hover:shadow-violet-500/25"
-              aria-label="Dashboard"
+              className="nav-link"
+              aria-current={isActive("/dashboard") ? "page" : undefined}
             >
-              <LayoutDashboard className="size-4" aria-hidden="true" />
+              <LayoutDashboard
+                className="hidden size-4 md:block"
+                aria-hidden="true"
+              />
+              Dashboard
             </Link>
           ) : (
             <Link
               href="/login"
-              className={navLinkClasses}
+              className="nav-link"
+              aria-current={isActive("/login") ? "page" : undefined}
             >
-              Login
+              Login{" "}
+              <span className="text-primary" aria-hidden="true">
+                &#8599;
+              </span>
+            </Link>
+          )}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="nav-link"
+              aria-current={isActive("/admin") ? "page" : undefined}
+            >
+              <ShieldCheck
+                className="hidden size-4 md:block"
+                aria-hidden="true"
+              />
+              Admin
             </Link>
           )}
         </nav>
