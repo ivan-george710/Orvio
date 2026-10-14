@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { protectedPath, loginRedirectPath } from "@/lib/auth-routing";
 
 export async function updateSession(request: NextRequest) {
-  const response = NextResponse.next({
+  let response = NextResponse.next({
     request,
   });
 
@@ -14,38 +15,43 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, headers = {}) {
+          const previousCookies = response.cookies.getAll();
+          const cacheHeaders = ["cache-control", "expires", "pragma"]
+            .map((name) => [name, response.headers.get(name)] as const);
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
+          previousCookies.forEach((cookie) => response.cookies.set(cookie));
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options);
           });
+          cacheHeaders.forEach(([name, value]) => {
+            if (value) response.headers.set(name, value);
+          });
+          Object.entries(headers).forEach(([name, value]) => response.headers.set(name, value));
         },
       },
     },
   );
 
   const {
-    data: { user },
+    data: { user }, error,
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
 
-  const protectedRoutes = [
-    "/dashboard",
-    "/registrations",
-    "/admin",
-    "/events/create",
-  ];
-
-  const isProtectedRoute = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`),
-  );
-
-  if (!user && isProtectedRoute) {
+  if ((!user || error) && protectedPath(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("redirectTo", pathname);
-
-    return NextResponse.redirect(url);
+    const destination = new URL(loginRedirectPath(pathname, request.nextUrl.search), url.origin);
+    url.pathname = destination.pathname;
+    url.search = destination.search;
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    for (const name of ["cache-control", "expires", "pragma"]) {
+      const value = response.headers.get(name);
+      if (value) redirect.headers.set(name, value);
+    }
+    return redirect;
   }
 
   return response;

@@ -7,6 +7,8 @@ import {
   deleteEvent,
   rejectEvent,
   updateEvent,
+  createOwnedEvent,
+  EventMutationError,
 } from "@/lib/services/server/events";
 
 import {
@@ -14,6 +16,7 @@ import {
   registerForEvent,
 } from "@/lib/services/server/registrations";
 import type { CreateEventInput } from "@/lib/validations/event";
+import type { EventDetailsInput } from "@/lib/event-metadata";
 
 type ActionResult = { ok: true } | { ok: false; message: string };
 
@@ -50,12 +53,27 @@ export async function cancelRegistrationAction(
   }
 }
 
-export async function updateEventAction(id: string, data: CreateEventInput) {
-  await updateEvent(id, data);
+export async function createEventAction(input: unknown) {
+  try {
+    const event = await createOwnedEvent(input);
+    revalidatePath("/dashboard");
+    revalidatePath("/admin");
+    return { ok: true as const, id: event.id };
+  } catch (error) {
+    return { ok: false as const, message: error instanceof EventMutationError ? error.message : "Your event could not be created. Please try again." };
+  }
+}
 
-  revalidatePath("/dashboard");
-  revalidatePath(`/events/${id}`);
-  revalidatePath(`/events/${id}/edit`);
+export async function updateEventAction(id: string, data: CreateEventInput | EventDetailsInput) {
+  try {
+    await updateEvent(id, data);
+    revalidatePath("/dashboard");
+    revalidatePath(`/events/${id}`);
+    revalidatePath(`/events/${id}/edit`);
+    return { ok: true as const };
+  } catch (error) {
+    return { ok: false as const, message: error instanceof EventMutationError ? error.message : "Your event could not be updated. Please try again." };
+  }
 }
 
 export async function deleteEventAction(id: string) {

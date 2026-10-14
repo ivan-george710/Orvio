@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import CreateEventForm from "@/components/events/CreateEventForm";
 import { getEditableEventById } from "@/lib/services/server/events";
-import type { CreateEventInput } from "@/lib/validations/event";
+import { eventCategory, type EventDetailsInput } from "@/lib/event-metadata";
 
 type EditEventPageProps = {
   params: Promise<{
@@ -20,9 +20,11 @@ function toFormValues(event: Awaited<ReturnType<typeof getEditableEventById>>) {
     title: event.title,
     description: event.description,
     venue: event.venue,
-    event_datetime: event.event_datetime?.slice(0, 16) ?? "",
+    event_datetime: event.event_datetime ?? "",
     max_participants: event.max_participants ?? 1,
-  } satisfies CreateEventInput;
+    category: eventCategory(event.category),
+    banner_url: event.banner_url ?? null,
+  } satisfies EventDetailsInput;
 }
 
 export default async function EditEventPage({ params }: EditEventPageProps) {

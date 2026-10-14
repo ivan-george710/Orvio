@@ -3,6 +3,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import Module from "node:module";
 import ts from "typescript";
+import { z } from "zod";
+import { loadSubject } from "./support/load-subject.mjs";
+
+const validation = loadSubject("../../lib/validations/event.ts", { zod: { z } });
+const metadata = loadSubject("../../lib/event-metadata.ts", {
+  zod: { z }, "@/lib/validations/event": validation,
+});
 
 function loadEvents({ role = "admin", pages = [[]] } = {}) {
   const calls = [];
@@ -34,6 +41,7 @@ function loadEvents({ role = "admin", pages = [[]] } = {}) {
   const filename = new URL("../lib/services/server/events.ts", import.meta.url);
   const mod = new Module(filename.pathname);
   mod.require = (id) => {
+    if (id === "@/lib/event-metadata") return metadata;
     if (id === "@/lib/supabase/server") return { createClient: async () => client };
     if (id === "@/lib/supabase/errors")
       return { throwSupabaseError: (error) => { throw error; } };

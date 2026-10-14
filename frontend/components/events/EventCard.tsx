@@ -2,6 +2,8 @@ import Link from "next/link";
 import CapacityIndicator from "@/components/events/CapacityIndicator";
 import { ArrowUpRight, Clock3, MapPin } from "lucide-react";
 import type { Event, EventStatus } from "@/lib/services/server/events";
+import EventBanner from "@/components/events/EventBanner";
+import { eventCategoryLabel } from "@/lib/event-metadata";
 type EventCardProps = { event: Event };
 export const statusBadgeClasses: Record<EventStatus, string> = {
   pending: "bg-warning/10 text-warning border-warning/25",
@@ -19,6 +21,7 @@ export default function EventCard({ event }: EventCardProps) {
       className="group block h-full rounded-xl focus-visible:outline-offset-4"
     >
       <article className="premium-card event-card flex h-full flex-col rounded-xl p-6">
+        <EventBanner url={event.banner_url} title={event.title} compact />
         <div className="flex items-start justify-between gap-4">
           <div className="event-date">
             <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-muted-foreground">
@@ -38,6 +41,7 @@ export default function EventCard({ event }: EventCardProps) {
         <h3 className="mt-7 line-clamp-2 break-words text-2xl font-semibold leading-tight tracking-[-.035em] transition-colors group-hover:text-ember-light">
           {event.title}
         </h3>
+        <p className="mt-2 text-xs text-muted-foreground">{eventCategoryLabel(event.category)}</p>
         <p className="mt-3 flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{event.venue}</span>

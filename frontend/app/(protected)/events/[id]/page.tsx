@@ -7,6 +7,8 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { statusBadgeClasses } from "@/components/events/EventCard";
 import RegisterEventButton from "@/components/events/RegisterEventButton";
 import { getEventById } from "@/lib/services/server/events";
+import EventBanner from "@/components/events/EventBanner";
+import { eventCategoryLabel } from "@/lib/event-metadata";
 
 type EventDetailsPageProps = {
   params: Promise<{
@@ -48,6 +50,8 @@ export default async function EventDetailsPage({
               {event.title}
             </h1>
           </div>
+          <p className="mt-4 text-sm text-muted-foreground">{eventCategoryLabel(event.category)}</p>
+          <EventBanner url={event.banner_url} title={event.title} />
           <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-16">
             <div>
               <div className="grid gap-6 sm:grid-cols-2">

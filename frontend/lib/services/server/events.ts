@@ -3,6 +3,7 @@ import type { RegistrationSummary } from "@/lib/registrations";
 import { createClient } from "@/lib/supabase/server";
 import { throwSupabaseError } from "@/lib/supabase/errors";
 import type { CreateEventInput } from "@/lib/validations/event";
+import { eventDetailsSchema, ownedBannerUrl, type EventCategory, type EventDetailsInput } from "@/lib/event-metadata";
 
 export type EventStatus =
   "pending" | "approved" | "rejected" | "completed" | "cancelled";
@@ -19,6 +20,8 @@ export type Event = {
   created_at: string;
   organizer_name?: string;
   registration?: RegistrationSummary;
+  category?: EventCategory;
+  banner_url?: string | null;
 };
 
 export type UserRole = "participant" | "organizer" | "admin";
@@ -34,9 +37,11 @@ export type AdminEventStats = {
 };
 
 const eventColumns =
-  "id,title,description,venue,event_datetime,max_participants,status,created_by,created_at";
+  "id,title,description,venue,event_datetime,max_participants,status,created_by,created_at,category,banner_url";
 
 const pendingEventColumns = `${eventColumns},creator:profiles(full_name)`;
+
+export class EventMutationError extends Error {}
 
 type PendingEventRow = Event & {
   creator: {
@@ -52,11 +57,11 @@ async function getAuthenticatedUser() {
   const supabase = await createClient();
 
   const {
-    data: { user },
+    data: { user }, error,
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    throw new Error("Not authenticated.");
+  if (error || !user) {
+    throw new EventMutationError("Not authenticated.");
   }
 
   return { supabase, user };
@@ -133,6 +138,11 @@ export async function getApprovedEvents(options?: {
     if (data.length < 500) break;
   }
   return withRegistrationSummaries(events);
+}
+
+export async function getEventDiscovery(options?: { search?: string }) {
+  const events = await getApprovedEvents(options);
+  return { events, checked_at: Date.now() };
 }
 
 export async function getEventById(id: string): Promise<Event | null> {
@@ -312,35 +322,63 @@ export async function adminDeleteEvent(id: string): Promise<void> {
 
 export async function updateEvent(
   id: string,
-  data: CreateEventInput,
+  data: CreateEventInput | EventDetailsInput,
 ): Promise<Event> {
   const { supabase, user } = await getAuthenticatedUser();
   const event = await getEventById(id);
 
   if (!event) {
-    throw new Error("Event not found.");
+    throw new EventMutationError("Event not found.");
   }
 
   if (event.created_by !== user.id) {
-    throw new Error("Only the creator can edit this event.");
+    throw new EventMutationError("Only the creator can edit this event.");
   }
 
   if (event.status !== "pending") {
-    throw new Error("Only pending events can be edited.");
+    throw new EventMutationError("Only pending events can be edited.");
   }
+
+  const validated = validateEventDetails(data, user.id);
 
   const { data: updatedEvent, error } = await supabase
     .from("events")
-    .update(data)
+    .update(validated)
     .eq("id", id)
     .select(eventColumns)
     .single<Event>();
 
   if (error) {
-    throwSupabaseError(error, "Failed to update event.");
+    throw new EventMutationError("Your event could not be updated. Please try again.");
   }
 
   return updatedEvent;
+}
+
+function validateEventDetails(input: unknown, userId: string): EventDetailsInput {
+  const result = eventDetailsSchema.safeParse(input);
+  if (!result.success) throw new EventMutationError(result.error.issues[0]?.message || "Check your event details.");
+  let bannerUrl;
+  try {
+    bannerUrl = ownedBannerUrl(result.data.banner_url, userId, process.env.NEXT_PUBLIC_SUPABASE_URL);
+  } catch {
+    throw new EventMutationError("Choose a banner uploaded by your account.");
+  }
+  return {
+    ...result.data,
+    banner_url: bannerUrl,
+  };
+}
+
+export async function createOwnedEvent(input: unknown): Promise<Event> {
+  const { supabase, user } = await getAuthenticatedUser();
+  const details = validateEventDetails(input, user.id);
+  const { data, error } = await supabase.from("events")
+    .insert({ ...details, created_by: user.id, status: "pending" })
+    .select(eventColumns)
+    .single<Event>();
+  if (error || !data) throw new EventMutationError("Your event could not be created. Please try again.");
+  return data;
 }
 
 export async function deleteEvent(id: string): Promise<void> {

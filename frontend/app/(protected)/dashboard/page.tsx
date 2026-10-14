@@ -10,6 +10,8 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import QuickActions from "@/components/dashboard/QuickActions";
 import DeleteEventButton from "@/components/events/DeleteEventButton";
 import EventCard from "@/components/events/EventCard";
+import { getCurrentProfile } from "@/lib/services/server/profile";
+import { profileDisplayName } from "@/lib/profile";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -22,9 +24,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const [events, registrations] = await Promise.all([
+  const [events, registrations, profile] = await Promise.all([
     getMyEvents(),
     getMyRegistrations(),
+    getCurrentProfile(),
   ]);
   const pendingEvents = events.filter((event) => event.status === "pending");
   const approvedEvents = events.filter((event) => event.status === "approved");
@@ -36,7 +39,7 @@ export default async function DashboardPage() {
           <div>
             <p className="eyebrow">Your personal workspace</p>
             <h1 className="premium-title mt-4 text-4xl font-semibold">
-              Welcome, {user.user_metadata.full_name}
+              Welcome, {profileDisplayName(profile.full_name)}
             </h1>
             <p className="premium-text mt-4">
               Your ideas, your events, your next chapter.

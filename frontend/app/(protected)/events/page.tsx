@@ -3,11 +3,16 @@ import { CalendarDays, ArrowUpRight } from "lucide-react";
 
 import EventsSearchBar from "@/components/events/EventsSearchBar";
 import EventCard from "@/components/events/EventCard";
-import { getApprovedEvents } from "@/lib/services/server/events";
+import { getEventDiscovery } from "@/lib/services/server/events";
+import EventFilters from "@/components/events/EventFilters";
+import { readEventFilters, filterDiscoveryEvents, hasEventFilters, type EventSearchParams } from "@/lib/event-discovery";
 
-export default async function EventsPage({ searchParams }: { searchParams: Promise<{ search?: string }> }) {
-  const search = (await searchParams).search?.trim() ?? "";
-  const events = await getApprovedEvents({ search });
+export default async function EventsPage({ searchParams }: { searchParams: Promise<EventSearchParams> }) {
+  const params = await searchParams;
+  const search = typeof params.search === "string" ? params.search.trim() : "";
+  const filters = readEventFilters(params);
+  const { events: approved, checked_at } = await getEventDiscovery({ search });
+  const events = filterDiscoveryEvents(approved, filters, checked_at);
 
   return (
     <main className="premium-page">
@@ -24,6 +29,8 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
         </div>
 
         <EventsSearchBar />
+        <EventFilters filters={filters} />
+        <p role="status" className="mt-5 text-sm text-muted-foreground">Showing {events.length} of {approved.length} matching approved events.</p>
 
         {events.length === 0 ? (
           <div className="premium-empty mt-16 flex flex-col items-center justify-center rounded-xl px-6 py-16 text-center">
@@ -32,12 +39,13 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
             </div>
 
             <h2 className="mt-5 text-2xl font-semibold text-foreground">
-              {search ? "No matching events." : "No upcoming events."}
+              {search || hasEventFilters(filters) ? "No matching events." : "No approved events."}
             </h2>
 
             <p className="mt-2 text-muted-foreground">
-              New experiences are on their way. Check back for newly approved
-              events.
+              {search || hasEventFilters(filters)
+                ? "Try a different search or clear your filters."
+                : "New experiences are on their way. Check back for newly approved events."}
             </p>
             <Link
               href="/events/create"

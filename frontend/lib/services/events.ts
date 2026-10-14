@@ -1,26 +1,9 @@
-import { createClient } from "@/lib/supabase/client";
-import { CreateEventInput } from "@/lib/validations/event";
+import { createEventAction } from "@/lib/actions/events";
+import type { CreateEventInput } from "@/lib/validations/event";
+import type { EventDetailsInput } from "@/lib/event-metadata";
 
-export async function createEvent(data: CreateEventInput) {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("Not authenticated.");
-  }
-
-  const { error } = await supabase
-    .from("events")
-    .insert({
-      ...data,
-      created_by: user.id,
-      status: "pending",
-    });
-
-  if (error) {
-    throw error;
-  }
+export async function createEvent(data: CreateEventInput | EventDetailsInput) {
+  const result = await createEventAction(data);
+  if (!result.ok) throw new Error(result.message);
+  return { id: result.id };
 }

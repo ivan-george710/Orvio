@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { type Resolver, useForm } from "react-hook-form";
+import { type Resolver, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
@@ -11,14 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateEventAction } from "@/lib/actions/events";
 import { createEvent } from "@/lib/services/events";
-import {
-  createEventSchema,
-  type CreateEventInput,
-} from "@/lib/validations/event";
+import { EVENT_CATEGORIES, eventCategory, eventDetailsSchema, type EventDetailsInput } from "@/lib/event-metadata";
+import { eventDateTimeForStorage, localEventDateTime } from "@/lib/event-datetime";
+import BannerUpload from "@/components/events/BannerUpload";
 
 type CreateEventFormProps = {
   eventId?: string;
-  initialValues?: CreateEventInput;
+  initialValues?: EventDetailsInput;
 };
 
 export default function CreateEventForm({
@@ -27,28 +26,46 @@ export default function CreateEventForm({
 }: CreateEventFormProps) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState("");
+  const [uploadBusy, setUploadBusy] = useState(false);
   const isEditing = Boolean(eventId);
 
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<CreateEventInput>({
-    resolver: zodResolver(createEventSchema) as Resolver<CreateEventInput>,
-    defaultValues: initialValues,
+  } = useForm<EventDetailsInput>({
+    resolver: zodResolver(eventDetailsSchema) as Resolver<EventDetailsInput>,
+    defaultValues: {
+      ...initialValues,
+      category: eventCategory(initialValues?.category),
+      banner_url: initialValues?.banner_url ?? null,
+      event_datetime: "",
+    },
   });
+  const bannerUrl = useWatch({ control, name: "banner_url" });
+  useEffect(() => {
+    if (initialValues?.event_datetime) {
+      setValue("event_datetime", localEventDateTime(initialValues.event_datetime));
+    }
+  }, [initialValues?.event_datetime, setValue]);
 
-  async function onSubmit(data: CreateEventInput) {
+  async function onSubmit(data: EventDetailsInput) {
     try {
       setSubmitError("");
+      const submission = {
+        ...data,
+        event_datetime: eventDateTimeForStorage(data.event_datetime, initialValues?.event_datetime),
+      };
       if (eventId) {
-        await updateEventAction(eventId, data);
+        const result = await updateEventAction(eventId, submission);
+        if (!result.ok) throw new Error(result.message);
       } else {
-        await createEvent(data);
+        await createEvent(submission);
       }
       router.push("/dashboard");
     } catch (err) {
-      console.error(err);
       setSubmitError(
         err instanceof Error
           ? err.message
@@ -78,6 +95,17 @@ export default function CreateEventForm({
             {errors.title.message}
           </p>
         )}
+      </div>
+
+      <div className="space-y-2.5 sm:col-span-2">
+        <Label htmlFor="event-category">Category</Label>
+        <select id="event-category" {...register("category")} disabled={isSubmitting}
+          className="min-h-11 w-full rounded-lg border border-border bg-secondary px-3 text-sm"
+          aria-invalid={Boolean(errors.category)}
+          aria-describedby={errors.category ? "category-error" : undefined}>
+          {EVENT_CATEGORIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+        </select>
+        {errors.category && <p id="category-error" role="alert" className={errorClassName}>{errors.category.message}</p>}
       </div>
 
       <div className="space-y-2.5 sm:col-span-2">
@@ -114,6 +142,11 @@ export default function CreateEventForm({
         )}
       </div>
 
+      <BannerUpload value={bannerUrl ?? null} disabled={isSubmitting}
+        onBusyChange={setUploadBusy}
+        onChange={(value) => setValue("banner_url", value, { shouldDirty: true, shouldValidate: true })} />
+      {errors.banner_url && <p role="alert" className={`${errorClassName} sm:col-span-2`}>{errors.banner_url.message}</p>}
+
       <div className="space-y-2.5">
         <Label htmlFor="event_datetime">Date and Time</Label>
         <Input
@@ -125,6 +158,7 @@ export default function CreateEventForm({
           type="datetime-local"
           {...register("event_datetime")}
         />
+        <p className="text-xs text-muted-foreground">Times use your device&apos;s local time.</p>
         {errors.event_datetime && (
           <p id="event_datetime-error" role="alert" className={errorClassName}>
             {errors.event_datetime.message}
@@ -167,7 +201,7 @@ export default function CreateEventForm({
 
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || uploadBusy}
         size="lg"
         className="w-full sm:col-span-2"
       >

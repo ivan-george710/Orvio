@@ -1,20 +1,19 @@
 import { redirect } from "next/navigation";
 import { Mail, ShieldCheck, UserRound } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile, ProfileError } from "@/lib/services/server/profile";
+import { profileDisplayName } from "@/lib/profile";
+import ProfileForm from "@/components/profile/ProfileForm";
 
 export default async function ProfilePage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
+  let profile;
+  try {
+    profile = await getCurrentProfile();
+  } catch (error) {
+    if (error instanceof ProfileError && error.code === "auth") redirect("/login?redirectTo=%2Fprofile");
+    throw error;
   }
-
-  const fullName = user.user_metadata.full_name ?? "Orvio Member";
+  const fullName = profileDisplayName(profile.full_name);
 
   return (
     <main className="premium-page">
@@ -50,7 +49,7 @@ export default async function ProfilePage() {
             <h2 className="mt-6 text-xl font-semibold text-foreground">
               Email
             </h2>
-            <p className="mt-2 break-all text-muted-foreground">{user.email}</p>
+            <p className="mt-2 break-all text-muted-foreground">{profile.email}</p>
           </section>
 
           <section className="premium-card rounded-xl p-6">
@@ -61,9 +60,10 @@ export default async function ProfilePage() {
             <h2 className="mt-6 text-xl font-semibold text-foreground">
               Account ID
             </h2>
-            <p className="mt-2 break-all text-muted-foreground">{user.id}</p>
+            <p className="mt-2 break-all text-muted-foreground">{profile.id}</p>
           </section>
         </div>
+        <ProfileForm initialName={profile.full_name ?? ""} />
       </div>
     </main>
   );
