@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": ["lib/registrations.ts", "lib/utils.ts", "lib/validations/event.ts", "lib/supabase/errors.ts"],
+  "ignorePatterns": ["**", "!lib/registrations.ts", "!lib/utils.ts", "!lib/validations/event.ts", "!lib/supabase/errors.ts", "!tests/registrations.test.mjs", "!tests/modules.test.mjs", "!tests/module-loader.mjs", "!package.json", "!package-lock.json"],
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "node --test tests/registrations.test.mjs tests/modules.test.mjs"
+  },
+  "coverageAnalysis": "off",
+  "concurrency": 2,
+  "timeoutMS": 10000,
+  "reporters": ["progress", "clear-text", "html", "json"],
+  "htmlReporter": { "fileName": "reports/mutation/index.html" },
+  "jsonReporter": { "fileName": "reports/mutation/results.json" }
+}

@@ -141,3 +141,14 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Generated testing artifacts and mutation sandboxes
+frontend/playwright-report/
+frontend/test-results/
+frontend/reports/
+frontend/.stryker-tmp/
+frontend/.playwright-browsers/
+
+# Local assignment exports, builders and render checks
+/output/assignment3/
+/tmp/assignment3/

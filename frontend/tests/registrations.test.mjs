@@ -66,3 +66,23 @@ test("database internals never appear in user-facing errors", () => {
   assert.match(registrationError("EVENT_FULL"), /full/);
   assert.match(registrationError("NO_ACTIVE_REGISTRATION"), /cancelled/);
 });
+
+test("known registration failures explain the required user action", () => {
+  const expected = [
+    ["AUTH_REQUIRED", /log in/i],
+    ["EVENT_NOT_FOUND", /no longer available/i],
+    ["EVENT_NOT_APPROVED", /not accepting registrations/i],
+    ["EVENT_STARTED", /registration changes are closed/i],
+    ["ATTENDEES_FORBIDDEN", /do not have permission/i],
+    ["INVALID_EVENT", /valid event/i],
+  ];
+  for (const [code, explanation] of expected) {
+    assert.match(registrationError(code), explanation, code);
+  }
+});
+
+test("non-string return paths cannot be accepted through implicit coercion", () => {
+  for (const value of [null, 42, true, new String("/events/fixture"), { toString: () => "/events/fixture" }]) {
+    assert.equal(safeReturnPath(value), "/dashboard");
+  }
+});

@@ -7,7 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "test:unit": "node --test tests/registrations.test.mjs tests/modules.test.mjs",
+    "test:browser": "node scripts/playwright.mjs test",
+    "test:integration": "node scripts/playwright.mjs test --project=integration",
+    "test:regression": "node scripts/playwright.mjs test --project=regression",
+    "test:ui": "node scripts/playwright.mjs test --ui",
+    "test:mutation": "stryker run",
+    "test:report:integration": "node scripts/playwright.mjs show-report reports/playwright/integration",
+    "test:report:regression": "node scripts/playwright.mjs show-report reports/playwright/regression",
+    "test:report": "node scripts/playwright.mjs show-report reports/playwright/all --host 127.0.0.1 --port 9323",
+    "test:browsers": "node scripts/playwright.mjs install chromium"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -29,6 +39,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@stryker-mutator/core": "9.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
